@@ -1,0 +1,29 @@
+{
+  "name": "anubis-ui",
+  "version": "1.0.0",
+  "description": "Class-based css generator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "style": "dist/_anubis.scss",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HugoLMTY/anubis-ui.git"
+  },
+  "author": "HugoLMTY - Improba",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HugoLMTY/anubis-ui/issues"
+  },
+  "homepage": "https://github.com/HugoLMTY/anubis-ui#readme",
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.2"
+  },
+  "dependencies": {
+    "fast-glob": "^3.3.3",
+    "fs": "^0.0.1-security"
+  }
+}

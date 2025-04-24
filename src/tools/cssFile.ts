@@ -1,0 +1,36 @@
+import fs from 'fs'
+import path from 'path'
+import { log } from './logger'
+
+const distDir = path.join(__dirname, '..', '..', 'dist')
+const outputPath = path.join(distDir, '_anubis.scss')
+
+const checkCssRuleFilePresence = () => {
+  try {
+    fs.mkdirSync(distDir, { recursive: true })
+
+    if (fs.existsSync(outputPath)) { return }
+
+    log('Output file missing, generating..')
+    fs.writeFileSync(outputPath, '')
+  } catch (err: any) {
+    throw new Error(`Erreur lors de la vérification du fichier CSS: ${err.message}`)
+  }
+}
+
+const buildCssRuleFile = (classes: string = '') => {
+  try {
+    checkCssRuleFilePresence()
+
+    fs.writeFileSync(outputPath, classes)
+
+    return outputPath
+  } catch (err: any) {
+    throw new Error(`Erreur lors de l'écriture du fichier CSS: ${err.message}`)
+  }
+}
+
+export {
+  checkCssRuleFilePresence,
+  buildCssRuleFile
+}

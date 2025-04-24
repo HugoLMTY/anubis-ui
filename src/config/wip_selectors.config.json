@@ -1,0 +1,30 @@
+{
+  "states": [
+    {
+      "prefix": "hover",
+      "selector": ":hover"
+    },
+    {
+      "prefix": "not-hover",
+      "selector": ":not(:hover)"
+    }
+  ],
+  "prefixes": [
+    {
+      "prefix": "bg",
+      "selector": "background: ${value} !important"
+    },
+    {
+      "prefix": "border",
+      "selector": "border-width: 1px; border-style: solid; border-color: ${value} !important"
+    },
+    {
+      "prefix": "inner-border",
+      "selector": "box-shadow: inset ${value} !important"
+    },
+    {
+      "prefix": "shadow",
+      "selector": "box-shadow: ${value} !important"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "defaultBorderRadius": "6px",
+    "borderRadiuses": [
+      { "lessest": "2px" },
+      { "lesser": "3px" },
+      { "less": "4px" },
+      { "more": "6px" },
+      { "morer": "8px" },
+      { "morest": "12px" },
+      { "half": "25%" },
+      { "full": "50%" }
+    ],
+
+    "defaultBorderWidth": "4px",
+    "borderWidths": [
+      { "thinest": "1px" },
+      { "thiner": "2px" },
+      { "thin": "3px" },
+      { "thick": "6px" },
+      { "thicker": "8px" },
+      { "thickest": "10px" },
+      { "node": "0.2rem" }
+    ],
+
+    "defaultInnerBorderWidth": "4px",
+    "innerBorderWidths": [
+      { "thinest": "1px" },
+      { "thiner": "2px" },
+      { "thin": "3px" },
+      { "thick": "6px" },
+      { "thicker": "8px" },
+      { "thickest": "10px" },
+      { "node": "0.2rem" }
+    ],
+
+    "defaultShadow": "0px 0px 7px 1px",
+    "shadowWidths": [
+      { "densest": "0px 0px 3px 1px" },
+      { "denser": "0px 0px 5px 1px" },
+      { "dense": "0px 0px 5px 1px" },
+      { "wide": "0px 0px 10px 1px" },
+      { "wider": "0px 0px 15px 1px" },
+      { "widest": "0px 0px 20px 1px" }
+    ]
+  }
+]

@@ -1,0 +1,16 @@
+import fg from 'fast-glob'
+import fs from 'fs'
+
+import { IFileConfig } from '../../interfaces/files.interface'
+
+const getFiles = async (routeConfig: IFileConfig) => {
+  return await fg(routeConfig.targets || '*.vue', {
+    absolute: true,
+    onlyFiles: true,
+    ignore: routeConfig.ignore || [],
+  })
+}
+
+export {
+  getFiles
+}

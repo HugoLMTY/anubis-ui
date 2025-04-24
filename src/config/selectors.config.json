@@ -1,0 +1,13 @@
+{
+  "states": [
+      "hover",
+      "not-hover"
+  ],
+  "prefixes": [
+      "bg",
+      "text",
+      "border",
+      "inner-border",
+      "shadow"
+  ]
+}
