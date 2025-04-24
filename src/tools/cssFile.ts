@@ -5,7 +5,7 @@ const path = require('path')
 
 import { cssHeader, log } from './logger'
 
-const distDir = path.join(__dirname, '..', 'css')
+const distDir = path.join(__dirname, '..', '..', 'css')
 const outputPath = path.join(distDir, '_anubis.scss')
 
 const checkCssRuleFilePresence = () => {
