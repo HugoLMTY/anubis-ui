@@ -5,12 +5,12 @@ const path = require('path')
 
 import { cssHeader, log } from './logger'
 
-const distDir = path.join(__dirname, '..', '..', 'css')
-const outputPath = path.join(distDir, '_anubis.scss')
+const srcDir = path.join(process.cwd(), 'src', 'css')
+const outputPath = path.join(srcDir, '_anubis.scss')
 
 const checkCssRuleFilePresence = () => {
   try {
-    fs.mkdirSync(distDir, { recursive: true })
+    fs.mkdirSync(srcDir, { recursive: true })
 
     if (fs.existsSync(outputPath)) { return }
 
