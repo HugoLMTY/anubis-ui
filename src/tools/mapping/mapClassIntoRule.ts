@@ -1,4 +1,16 @@
 import { config } from "../../config/config.tool"
+import { log } from "../logger"
+
+const mapClassesIntoRules = (classes: string[]) => {
+  const mappedRules = classes
+    ?.map(cssClass => mapClassIntoRule(cssClass))
+    ?.filter(rule => rule)
+
+  log(`${mappedRules?.length} rules generated`)
+
+  const rules = mappedRules?.join('\n')
+  return rules
+}
 
 const mapClassIntoRule = (stringClass: string) => {
   const colorExists = config.colors?.some(color => stringClass.includes(color))
@@ -59,11 +71,12 @@ const getVariantInfos = ({ cleanedColor, prefix }: { cleanedColor: string, prefi
   const isOpacity = opacityDetectionRegex.test(cleanedColor)
   if (isOpacity) {
     return {
-      color: cleanedColor?.slice(0, -3),
-      variation: {
-        key: 'opacity',
-        value: cleanedColor?.slice(-2),
-      }
+      color: cleanedColor // Opacity is included in the color name, whoops on me for this one (and every other one tho)
+      // color: cleanedColor?.slice(0, -3),
+      // variation: {
+      //   key: 'opacity',
+      //   value: cleanedColor?.slice(-2),
+      // }
     }
   }
 
@@ -151,5 +164,6 @@ function mapIntoRule({ state, prefix, color, variation }: { state?: string, pref
 }
 
 export {
+  mapClassesIntoRules,
   mapClassIntoRule
 }

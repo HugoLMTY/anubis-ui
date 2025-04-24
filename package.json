@@ -5,14 +5,14 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "prepare": "npm run build"
+    "preinstall": "npm run build"
   },
   "style": "dist/_anubis.scss",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HugoLMTY/anubis-ui.git"
   },
-  "author": "HugoLMTY - Improba",
+  "author": "Improba",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/HugoLMTY/anubis-ui/issues"

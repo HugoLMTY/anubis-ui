@@ -13,8 +13,15 @@ const logo = () => {
   log('---')
 }
 
+const cssHeader = `/*!
+ * * Anubis v.1.0.4
+ * * Improba
+ * * Released under the MIT License.
+ * */`
+
 export {
   logo,
+  cssHeader,
 
   log,
   logPrefix

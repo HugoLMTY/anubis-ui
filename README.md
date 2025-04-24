@@ -1,7 +1,7 @@
-# Anubis UI
+# AnubisUI
 > powered by [__Improba__](https://improba.fr/)
 
-Anubis UI (Autonomous Nominative Utility Based Intuitive Styler) is a Vite plugin that provides dynamic CSS class generation based on configuration files. It automatically generates CSS rules by scanning your Vue files and mapping utility classes to their corresponding styles.
+AnubisUI (Autonomous Nominative Utility Based Intuitive Styler) is a Vite plugin that provides dynamic CSS class generation based on configuration files. It automatically generates CSS rules by scanning your Vue files and mapping utility classes to their corresponding styles.
 
 ## Table of Contents
 1. [Features](#features)
@@ -23,10 +23,94 @@ Anubis UI (Autonomous Nominative Utility Based Intuitive Styler) is a Vite plugi
 - 🔍 Smart class detection and parsing
 
 # Installation
+
+1. Add the package to your project
+<br />
 `npm install anubis-ui`
 
+2. In the config file, add the package in the plugin section
+```js
+vitePlugins: [
+  [
+    anubisUI(),
+    ...
+  ]
+]
+```
+<sup>quasar.config.js</sup>
+
+3. Still in the config file, add the generated file to the css usage
+```js
+css: [
+  'app.scss',
+  '~anubis-ui/dist/_anubis.scss'
+],
+```
+<sup>quasar.config.js</sup>
+
+
+4. Start adding classes to your *.vue files
+```html
+<div class="bg-primary border-neutral-low hover:shadow-low" />
+```
+<sup>any .vue file</sup>
+
+5. Declare your project colors in the DOM ::root in anyway you want
+<br />
+Personnaly, i use the following method based on a mixin declaration
+
+```scss
+$background-opacity: (
+  10: 0.1,
+  20: 0.2,
+  30: 0.3,
+  40: 0.4,
+  50: 0.5,
+  60: 0.6,
+  70: 0.7,
+  80: 0.8,
+  90: 0.9
+);
+
+@mixin setGlobalColors($light, $dark, $name) {
+  @include setRootColors($name, $light, 'body--light');
+  @include setRootColors($name, $dark, 'body--dark');
+}
+
+@mixin setRootColors ($name, $color, $theme) {
+  :root {
+    body.#{$theme} {
+      #{"--"+$name}: $color;
+
+      @if $color != transparent {
+        @each $opacity, $multiplier in $background-opacity {
+          #{"--"+$name+"-"+$opacity}: #{rgba(red($color), green($color), blue($color), $multiplier)};
+        }
+      }
+    }
+  }
+}
+```
+<sup>src/css/_mixins.scss</sup>
+
+```scss
+@import './mixins';
+
+@include defineColorLightAndDark('primary', $blue-500, $blue-400);
+@include defineColorLightAndDark('secondary', $blue-grey-500, $blue-grey-400);
+@include defineColorLightAndDark('accent', $blue-500, $blue-400);
+@include defineColorLightAndDark('neutral', $slate-500, $slate-500);
+@include defineColorLightAndDark('success', $green-500, $green-400);
+@include defineColorLightAndDark('danger', $red-500, $red-400);
+```
+<sup>src/css/_colors_.scss</sup>
+
+6. Enjoy
+
 ## Configuration
-Anubis UI uses several configuration files located in the `src/config` directory:
+AnubisUI uses several configuration files located in the `src/config` directory:
+<br />
+Customisation from root file `anubis.config.json` will appear in future updates
 
 ---
 ### Colors (`colors.config.json`)
@@ -104,7 +188,8 @@ Configure common style presets
 </details>
 
 
----### Selectors (`selectors.config.json`)
+---
+### Selectors (`selectors.config.json`)
 Define available states and style prefixes
 
 <details>

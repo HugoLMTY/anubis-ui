@@ -1,7 +1,6 @@
 import { config } from "../../../config/config.tool"
 import { buildCssRuleFile } from "../../cssFile"
-import { log } from "../../logger"
-import { mapClassIntoRule } from "../../mapping/mapClassIntoRule"
+import { mapClassesIntoRules } from "../../mapping/mapClassIntoRule"
 import { getFiles } from "../extract.tools"
 
 // import fs from 'fs'
@@ -50,17 +49,6 @@ const extractClasses = async (filePath: string): Promise<string[]> => {
   if (!matches?.length) { return [] }
 
   return matches
-}
-
-const mapClassesIntoRules = (classes: string[]) => {
-  const mappedRules = classes
-    ?.map(cssClass => mapClassIntoRule(cssClass))
-    ?.filter(rule => rule)
-
-  log(`${mappedRules?.length} rules generated`)
-
-  const rules = mappedRules?.join('\n')
-  return rules
 }
 
 export {

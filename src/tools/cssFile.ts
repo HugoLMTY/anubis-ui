@@ -3,7 +3,7 @@
 const fs = require('fs')
 const path = require('path')
 
-import { log } from './logger'
+import { cssHeader, log } from './logger'
 
 const distDir = path.join(__dirname, '..', '..', 'dist')
 const outputPath = path.join(distDir, '_anubis.scss')
@@ -25,7 +25,7 @@ const buildCssRuleFile = (classes: string = '') => {
   try {
     checkCssRuleFilePresence()
 
-    fs.writeFileSync(outputPath, classes)
+    fs.writeFileSync(outputPath, cssHeader + '\n' + classes)
 
     return outputPath
   } catch (err: any) {
