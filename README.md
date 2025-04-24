@@ -3,12 +3,23 @@
 
 AnubisUI (Autonomous Nominative Utility Based Intuitive Styler) is a Vite plugin that provides dynamic CSS class generation based on configuration files. It automatically generates CSS rules by scanning your Vue files and mapping utility classes to their corresponding styles.
 
+> __THIS DOESN'T WORK__ ```<div :class="`bg-primary-${props.bg || 'low'}\`" />```
+> <br />
+> Classes must be EXPLICITY written in the code to allow the extraction to work correctly, dynamic classes will not work
+> <br />
+> In the future, some config will allow to generate a bunch of specified classes even if not present in the code
+> <br />
+> Until then, you can create a decoy .vue file filled with the dynamic classes you want
+> <br />
+
 ## Table of Contents
 1. [Features](#features)
 2. [Installation](#installation)
 3. [Configuration](#configuration)
-4. [Usage](#usage)
-5. [Architecture](#architecture)
+4. [Available Utility Classes](#available-utility-classes)
+5. [Prefix/Declaration relations](#prefixdeclaration-relations)
+6. [Architecture](#architecture)
+7. [Credits](#credits)
 
 ## Features
 - 🎨 Dynamic CSS generation based on utility classes
@@ -48,14 +59,7 @@ css: [
 ```
 <sup>quasar.config.js</sup>
 
-
-4. Start adding classes to your *.vue files
-```html
-<div class="bg-primary border-neutral-low hover:shadow-low" />
-```
-<sup>any .vue file</sup>
-
-5. Declare your project colors in the DOM ::root in anyway you want
+4. Declare your project colors in the DOM ::root in anyway you want
 <br />
 Personnaly, i use the following method based on a mixin declaration
 
@@ -72,7 +76,7 @@ $background-opacity: (
   90: 0.9
 );
 
-@mixin setGlobalColors($light, $dark, $name) {
+@mixin setGlobalColors($name, $light, $dark) {
   @include setRootColors($name, $light, 'body--light');
   @include setRootColors($name, $dark, 'body--dark');
 }
@@ -96,14 +100,28 @@ $background-opacity: (
 ```scss
 @import './mixins';
 
-@include defineColorLightAndDark('primary', $blue-500, $blue-400);
-@include defineColorLightAndDark('secondary', $blue-grey-500, $blue-grey-400);
-@include defineColorLightAndDark('accent', $blue-500, $blue-400);
-@include defineColorLightAndDark('neutral', $slate-500, $slate-500);
-@include defineColorLightAndDark('success', $green-500, $green-400);
-@include defineColorLightAndDark('danger', $red-500, $red-400);
+/**...highest... */
+/**...higher... */
+/**...high... */
+@include setGlobalColors('primary', $blue-500, $blue-400);
+/**...low... */
+/**...lower... */
+/**...lowest... */
+
+@include setGlobalColors('secondary', $blue-grey-500, $blue-grey-400);
+@include setGlobalColors('accent', $blue-500, $blue-400);
+@include setGlobalColors('neutral', $slate-500, $slate-500);
+@include setGlobalColors('success', $green-500, $green-400);
+@include setGlobalColors('danger', $red-500, $red-400);
 ```
 <sup>src/css/_colors_.scss</sup>
+
+
+5. Start adding classes however you want to (in *.vue files)
+```html
+<div class="bg-primary border-neutral-low hover:shadow-low" />
+```
+<sup>any .vue file</sup>
 
 6. Enjoy
 
@@ -128,6 +146,7 @@ Define your color palette
   "warning",
   "danger"
 ]
+// no need to includes (lowest, lower, low, high, higher, highest) variants as long as the color name is present in the class
 ```
 </details>
 
@@ -218,7 +237,8 @@ Define available states and style prefixes
 - `bg-{color}` - Background color
 - `text-{color}` - Text color
 - `border-{color}` - Border color
-- `shadow-{color}` - Box shadow color
+- `inner-border-{color}` - Inner border color (inset box shadow, not compatible with `shadow-`)
+- `shadow-{color}` - Box shadow color (not compatible with `inner-border-`)
 
 #### States
 - `hover:{utility}` - Apply style on hover
@@ -230,25 +250,34 @@ Define available states and style prefixes
 - `shadow-{color}-{preset}` - Box shadow spread
 - `inner-border-{color}-{preset}` - Box shadow inset width
 
+## Prefix/Declaration relations
+| prefix       | declaration                                                                 |
+|--------------|-----------------------------------------------------------------------------|
+| bg           | `background: {color} important;`                                            |
+| text         | `color: {color} important;`                                                 |
+| border       | `border-width: {variation \|\| default} !important; border-color: {color} !important; border-style: solid;` |
+| inner-border | `box-shadow: inset {variation \|\| default} {color} !important;`            |
+| shadow       | `box-shadow: {variation \|\| default} {color} !important;`                  |
+
 ## Architecture
 ### Core Components
 - **Vite Plugin**: Handles file watching and build process
 - **Class Extractor**: Scans files for utility classes
 - **Rule Generator**: Converts utility classes to CSS rules
-- **Configuration System**: Manages user preferences and presets
+- **Configuration System**: WIP - Manages user preferences and presets
 
 ### File Structure
 ```
-</details>src/
-
-├── config/ # Configuration files
-├── interfaces/ # TypeScript interfaces
-├── manual/ # Manually trigger anubis actions
-├── tools/
-│ ├── extract/ # Class extraction logic
-│ ├── mapping/ # Class to CSS rule mapping
-│ └── declaration/ # Style declaration handlers
-└── index.ts # Plugin entry point
+├── dist/ # Compiled and generated output
+├── src/
+│ ├── config/ # Configuration files
+│ ├── interfaces/ # TypeScript interfaces
+│ ├── manual/ # Manually trigger anubis actions
+│ └── tools/
+│  ├── extract/ # Class extraction logic
+│  ├── declaration/ # WIP - Style declaration handlers
+│  └── mapping/ # Class to CSS rule mapping
+└── index.js # Plugin entry point
 ```
 
 

@@ -3,6 +3,19 @@
   "version": "1.0.5",
   "description": "Class-based css generator",
   "main": "index.js",
+  "keywords": [
+    "anubis",
+    "anubisUI",
+
+    "css",
+    "scss",
+    "style",
+    "plugin",
+
+    "vite",
+    "quasar",
+    "vue"
+  ],
   "scripts": {
     "build": "tsc",
     "preinstall": "npm run build"
