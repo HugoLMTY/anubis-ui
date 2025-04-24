@@ -1,6 +1,6 @@
 {
   "name": "anubis-ui",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Class-based css generator",
   "main": "index.js",
   "keywords": [
