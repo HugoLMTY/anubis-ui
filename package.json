@@ -4,7 +4,8 @@
   "description": "Class-based css generator",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "prepare": "npm run build"
   },
   "style": "dist/_anubis.scss",
   "repository": {

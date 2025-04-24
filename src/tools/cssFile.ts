@@ -1,5 +1,8 @@
-import fs from 'fs'
-import path from 'path'
+// import fs from 'fs'
+// import path from 'path'
+const fs = require('fs')
+const path = require('path')
+
 import { log } from './logger'
 
 const distDir = path.join(__dirname, '..', '..', 'dist')

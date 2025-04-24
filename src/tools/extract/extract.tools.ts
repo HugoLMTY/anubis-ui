@@ -1,5 +1,5 @@
-import fg from 'fast-glob'
-import fs from 'fs'
+// import fg from 'fast-glob'
+const fg = require('fast-glob')
 
 import { IFileConfig } from '../../interfaces/files.interface'
 

@@ -4,7 +4,8 @@ import { log } from "../../logger"
 import { mapClassIntoRule } from "../../mapping/mapClassIntoRule"
 import { getFiles } from "../extract.tools"
 
-import fs from 'fs'
+// import fs from 'fs'
+const fs = require('fs')
 
 /** Fetch vue file based on config target patterns */
 const init = async () => {
