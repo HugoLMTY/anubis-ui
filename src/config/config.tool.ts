@@ -26,7 +26,7 @@ interface IEnvConfig {
   [key: string]: any
 }
 
-const configFolder = path.join(__dirname, '..', 'config')
+const configFolder = path.join(__dirname, '..', '..', 'src', 'config');
 const configFiles = [
   'files',
   'colors',
