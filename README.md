@@ -50,11 +50,11 @@ vitePlugins: [
 ```
 <sup>quasar.config.js</sup>
 
-3. Still in the config file, add the generated file to the css usage
+3. Still in the config file, add the generated file to the css usage (rules are generated in `src/css/_anubis.scss`, file is auto-created)
 ```js
 css: [
   'app.scss',
-  '~anubis-ui/dist/_anubis.scss'
+  '_anubis.scss'
 ],
 ```
 <sup>quasar.config.js</sup>

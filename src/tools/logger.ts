@@ -14,7 +14,7 @@ const logo = () => {
 }
 
 const cssHeader = `/*!
- * * Anubis v.1.0.8
+ * * Anubis v.1.0.13
  * * Improba
  * * Released under the MIT License.
  * */`
