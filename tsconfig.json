@@ -4,7 +4,7 @@
     "rootDir": "./src",
     "declaration": true,
     "module": "commonjs",
-    "target": "es2018",
+    "target": "es2019",
     "skipLibCheck": true,  // Ignore la vérification des fichiers .d.ts dans node_modules
     "esModuleInterop": true
   },
