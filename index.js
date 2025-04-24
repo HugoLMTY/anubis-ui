@@ -26,6 +26,9 @@ function AnubisUI() {
       server.watcher.on('change', async (file) => {
         console.log({ file });
 
+        // _ Prevent self change loop
+        if (!file.endsWith('_anubis.vue')) { return }
+
         console.time(`${logPrefix} Refreshed in`);
         await initClassExtraction();
         console.timeEnd(`${logPrefix} Refreshed in`);
