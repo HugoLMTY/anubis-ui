@@ -129,7 +129,45 @@ $background-opacity: (
 ## Configuration
 AnubisUI uses several configuration files located in the `src/config` directory:
 <br />
-Customisation from root file `anubis.config.json` will appear in future updates
+To override default configuration, add a `anubis.config.json` in project root folder.
+>Overriding completly replaces default configuration. You need to copy/paste it and add yours if you want to keep the default too.
+<br />
+
+For every config you want to change, add the corresponding section in your config file:
+
+```js
+{
+  // files.config.json
+  "files": {
+    "targets": ["/.vue"],
+    "ignore": []
+  },
+
+  // colors.config.json
+  "colors": ["primary", "secondary"],
+
+  // selectors.config.json
+  "selectors": {
+    "states": ["hover"],
+    "prefixes": ["bg", "text"]
+  },
+
+  // presets.config.json
+  "presets": {
+    "border": [
+      { "default": "4px" }
+    ]
+  }
+}
+```
+<sup>anubis.config.json (example)</sup>
+
+Only the sections you want to override need to be included - other sections will use default values. Not every
+> Presets is still unstable, use at your own risks
+<br />
+You __MUST__ use the exact same [presets](#presets-presetsconfigjson) names syntax to keep it working, but variations key/values can change.
+<br />
+Copy-paste is recommanded
 
 ---
 ### Colors (`colors.config.json`)
@@ -147,7 +185,6 @@ Define your color palette
   "warning",
   "danger"
 ]
-// no need to includes (lowest, lower, low, high, higher, highest) variants as long as the color name is present in the class
 ```
 </details>
 
@@ -169,6 +206,8 @@ Specify which files to scan for classes
 ---
 ### Presets (`presets.config.json`)
 Configure common style presets
+> If overrided in config, default key/value are __REQUIRED__
+
 <details>
 <summary>Default config</summary>
 
@@ -241,31 +280,31 @@ Define available states and style prefixes
 - `inner-border-{color}` - Inner border color (inset box shadow, not compatible with `shadow-`)
 - `shadow-{color}` - Box shadow color (not compatible with `inner-border-`)
 
+#### Presets variations
+- `bg-{color}-{(10-90)}` - Background opacity
+- `border-{color}-{presetKey}` - Border width
+- `shadow-{color}-{presetKey}` - Box shadow spread
+- `inner-border-{color}-{presetKey}` - Box shadow inset width
+
 #### States
 - `hover:{utility}` - Apply style on hover
 - `not-hover:{utility}` - Apply style when not hovering
-
-#### Presets
-- `bg-{color}-{(10-90)}` - Background opacity
-- `border-{color}-{preset}` - Border width
-- `shadow-{color}-{preset}` - Box shadow spread
-- `inner-border-{color}-{preset}` - Box shadow inset width
 
 ## Prefix/Declaration relations
 | prefix       | declaration                                                                 |
 |--------------|-----------------------------------------------------------------------------|
 | bg           | `background: {color} important;`                                            |
 | text         | `color: {color} important;`                                                 |
-| border       | `border-width: {variation \|\| default} !important; border-color: {color} !important; border-style: solid;` |
-| inner-border | `box-shadow: inset {variation \|\| default} {color} !important;`            |
-| shadow       | `box-shadow: {variation \|\| default} {color} !important;`                  |
+| border       | `border-width: {presetValue \|\| default} !important; border-color: {color} !important; border-style: solid;` |
+| inner-border | `box-shadow: inset {presetValue \|\| default} {color} !important;`            |
+| shadow       | `box-shadow: {presetValue \|\| default} {color} !important;`                  |
 
 ## Architecture
 ### Core Components
 - **Vite Plugin**: Handles file watching and build process
 - **Class Extractor**: Scans files for utility classes
 - **Rule Generator**: Converts utility classes to CSS rules
-- **Configuration System**: WIP - Manages user preferences and presets
+- **Configuration System**: Manages user preferences and presets
 
 ### File Structure
 ```
