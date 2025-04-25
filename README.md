@@ -20,6 +20,7 @@ AnubisUI (Autonomous Nominative Utility Based Intuitive Styler) is a Vite plugin
 5. [Prefix/Declaration relations](#prefixdeclaration-relations)
 6. [Architecture](#architecture)
 7. [Credits](#credits)
+8. [Licence](#licence)
 
 ## Features
 - 🎨 Dynamic CSS generation based on utility classes
@@ -286,3 +287,7 @@ Define available states and style prefixes
 This project was made possible thanks to the support and resources provided by [__Improba__](https://improba.fr/).
 <br />
 Their trust and commitment played a key role in bringing this idea to life, and i'm grateful for their involvement in making it happen.
+
+## Licence
+
+This project is licensed under the [MIT License](./LICENSE).

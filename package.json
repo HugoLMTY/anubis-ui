@@ -15,6 +15,7 @@
     "vue"
   ],
   "scripts": {
+    "dev": "npm run preinstall; node src/manual/build.js",
     "build": "tsc",
     "preinstall": "npm run build"
   },
@@ -24,7 +25,7 @@
     "url": "git+https://github.com/HugoLMTY/anubis-ui.git"
   },
   "author": "Improba",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/HugoLMTY/anubis-ui/issues"
   },
