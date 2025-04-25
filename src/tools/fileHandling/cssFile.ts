@@ -1,9 +1,7 @@
-// import fs from 'fs'
-// import path from 'path'
 const fs = require('fs')
 const path = require('path')
 
-import { cssHeader, log } from './logger'
+import { cssHeader, log } from '../logger'
 
 const srcDir = path.join(process.cwd(), 'src', 'css')
 const outputPath = path.join(srcDir, '_anubis.scss')

@@ -1,6 +1,8 @@
 const logPrefix = '☯︎ [ANUBIS]'
 const log = (str: string) => console.log(`${logPrefix} ${str}`)
 
+const { version } = require('./../../package.json')
+
 const logo = () => {
   log('    ___    _   ____  ______  _________')
   log('   /   |  / | / / / / / __ )/  _/ ___/')
@@ -14,7 +16,7 @@ const logo = () => {
 }
 
 const cssHeader = `/*!
- * * Anubis v.1.0.13
+ * * Anubis v.${version}
  * * Improba
  * * Released under the MIT License.
  * */`

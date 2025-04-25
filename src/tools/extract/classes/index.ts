@@ -1,9 +1,8 @@
 import { config } from "../../../config/config.tool"
-import { buildCssRuleFile } from "../../cssFile"
+import { buildCssRuleFile } from "../../fileHandling/cssFile"
 import { mapClassesIntoRules } from "../../mapping/mapClassIntoRule"
-import { getFiles } from "../extract.tools"
+import { getFiles } from "../../fileHandling/file.tools"
 
-// import fs from 'fs'
 const fs = require('fs')
 
 /** Fetch vue file based on config target patterns */
