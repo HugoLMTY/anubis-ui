@@ -1,11 +1,8 @@
 "use strict";
 
-const { init: initConfig } = require('./dist/config/config.tool');
+const { init: initConfig, config } = require('./dist/config/config.tool');
 const { log, logPrefix, logo } = require('./dist/tools/logger');
 const { init: initClassExtraction } = require('./dist/tools/extraction/extractClasses');
-
-/** List every imported colors across the projet */
-const colors = [];
 
 const init = async () => {
   logo();
@@ -52,5 +49,7 @@ function AnubisUI() {
   };
 }
 
-module.exports = AnubisUI;
-module.exports.colors = colors;
+module.exports = {
+  plugin: AnubisUI(),
+  config
+}
