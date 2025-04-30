@@ -146,18 +146,28 @@ For every config you want to change, add the corresponding section in your confi
   // colors.config.json
   "colors": ["primary", "secondary"],
 
-  // selectors.config.json
-  "selectors": {
-    "states": ["hover"],
-    "prefixes": ["bg", "text"]
-  },
+  // states.config.json
+  "states": ["hover"],
+
+  // qol.config.json
+  "qol": [
+    {
+      "prefix": "bg",
+      "declaration": "background: ${color}"
+    }
+  ],
 
   // presets.config.json
-  "presets": {
-    "border": [
-      { "default": "4px" }
-    ]
-  }
+  "presets": [
+    {
+      "prefix": "border",
+      "declaration": "border-width: ${value} !important; border-color: ${color} !important; border-style: solid;",
+      "variations": {
+        "default": "4px",
+        "thin": "2px"
+      }
+    }
+  ]
 }
 ```
 <sup>anubis.config.json (example)</sup>
@@ -212,65 +222,125 @@ Configure common style presets
 <summary>Default config</summary>
 
 ```json
-{
-  "border": [
-    { "default": "4px" },
-    { "thinest": "1px" },
-    { "thiner": "2px" },
-    { "thin": "3px" },
-    { "thick": "6px" },
-    { "thicker": "8px" },
-    { "thickest": "10px" },
-  ],
-
-  "innerBorder": [
-    { "default": "4px" },
-    { "thinest": "1px" },
-    { "thiner": "2px" },
-    { "thin": "3px" },
-    { "thick": "6px" },
-    { "thicker": "8px" },
-    { "thickest": "10px" },
-  ],
-
-  "shadow": [
-    { "default": "0px 0px 7px 1px" },
-    { "densest": "0px 0px 3px 1px" },
-    { "denser": "0px 0px 5px 1px" },
-    { "dense": "0px 0px 5px 1px" },
-    { "wide": "0px 0px 10px 1px" },
-    { "wider": "0px 0px 15px 1px" },
-    { "widest": "0px 0px 20px 1px" }
-  ]
-}
+[
+  {
+    "prefix": "bg",
+    "declaration": "background: ${color}"
+  },
+  {
+    "prefix": "border",
+    "declaration": "border-width: ${value} !important; border-color: ${color} !important; border-style: solid;",
+    "variations": {
+      "default": "4px",
+      "thinest": "1px",
+      "thiner": "2px",
+      "thin": "3px",
+      "thick": "6px",
+      "thicker": "8px",
+      "thickest": "10px",
+      "node": "0.2rem"
+    }
+  },
+  {
+    "prefix": "inner-border",
+    "declaration": "box-shadow: inset 0px 0px 0px ${value} ${color}",
+    "variations": {
+      "default": "4px",
+      "thinest": "1px",
+      "thiner": "2px",
+      "thin": "3px",
+      "thick": "6px",
+      "thicker": "8px",
+      "thickest": "10px",
+      "node": "0.2rem"
+    }
+  },
+  {
+    "prefix": "shadow",
+    "declaration": "box-shadow: ${value} ${color}",
+    "variations": {
+      "default": "0px 0px 7px 1px",
+      "densest": "0px 0px 3px 1px",
+      "denser": "0px 0px 5px 1px",
+      "dense": "0px 0px 5px 1px",
+      "wide": "0px 0px 10px 1px",
+      "wider": "0px 0px 15px 1px",
+      "widest": "0px 0px 20px 1px"
+    }
+  }
+]
 ```
 </details>
 
-
 ---
-### Selectors (`selectors.config.json`)
-Define available states and style prefixes
-
+### Quality of Life (`qol.config.json`)
+Define simple style rules that can have variations but don't require color values. These are CSS declarations that work independently.
 <details>
 <summary>Default config</summary>
 
 ```json
-{
-  "states": [
-      "hover",
-      "not-hover"
-  ],
-  "prefixes": [
-      "bg",
-      "text",
-      "border",
-      "inner-border",
-      "shadow"
-  ]
-}
+[
+  {
+    "prefix": "smooth",
+    "standalone": true,
+    "declaration": "transition-duration: ${value}",
+    "variations": {
+      "default": "0.1s",
+      "slowest": "0.5s",
+      "slower": "0.3s",
+      "slow": "0.2s",
+      "quick": "0.07s",
+      "quicker": "0.05s",
+      "quickest": "0.03s"
+    }
+  },
+  {
+    "prefix": "rounded",
+    "standalone": true,
+    "declaration": "border-radius: ${value}",
+    "variations": {
+      "default": "8px",
+      "square": "0px",
+      "xs": "2px",
+      "sm": "4px",
+      "md": "8px",
+      "lg": "12px",
+      "xl": "16px",
+      "very": "9999px",
+      "full": "50%",
+      "half": "100%"
+    }
+  },
+  {
+    "prefix": "border",
+    "declaration": "border-style: ${value}",
+    "variations": {
+      "solid": "solid",
+      "dashed": "dashed",
+      "dotted": "dotted"
+    }
+  }
+]
 ```
 </details>
 
+QoL rules can have:
+1. A prefix
+2. A declaration that uses ${value} for variations
+3. Optional variations with default values
+4. Optional `standalone` flag to allow usage without variations
+
+The `standalone` flag allows a QoL rule to be used without any variation. When set to `true`, the rule can be used:
+- With a variation: `rounded-lg`, `smooth-slow`
+- Without a variation: `rounded`, `smooth` (will use the default value)
+
+When `standalone` is `false` or not specified, the rule must always include a variation (e.g., `border-dashed`).
+
+Example usage:
+```html
+<div class="rounded-lg smooth-slow border-dashed" />
+<div class="rounded smooth" /> <!-- Works because these are standalone -->
+```
 
 ## Available Utility Classes
 #### Colors
@@ -312,11 +382,10 @@ Define available states and style prefixes
 ├── src/
 │ ├── config/ # Configuration files
 │ ├── interfaces/ # TypeScript interfaces
-│ ├── manual/ # Manually trigger anubis actions
 │ └── tools/
-│  ├── extract/ # Class extraction logic
-│  ├── declaration/ # WIP - Style declaration handlers
-│  └── mapping/ # Class to CSS rule mapping
+│   ├── extraction/ # Class extraction logic
+│   ├── fileStuff/ # File handling utilities
+│   └── mapping/ # Class to CSS rule mapping
 └── index.js # Plugin entry point
 ```
 

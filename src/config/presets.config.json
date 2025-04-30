@@ -1,33 +1,47 @@
-{
-  "border": [
-    { "default": "4px" },
-    { "thinest": "1px" },
-    { "thiner": "2px" },
-    { "thin": "3px" },
-    { "thick": "6px" },
-    { "thicker": "8px" },
-    { "thickest": "10px" },
-    { "node": "0.2rem" }
-  ],
-
-  "innerBorder": [
-    { "default": "4px" },
-    { "thinest": "1px" },
-    { "thiner": "2px" },
-    { "thin": "3px" },
-    { "thick": "6px" },
-    { "thicker": "8px" },
-    { "thickest": "10px" },
-    { "node": "0.2rem" }
-  ],
-
-  "shadow": [
-    { "default": "0px 0px 7px 1px" },
-    { "densest": "0px 0px 3px 1px" },
-    { "denser": "0px 0px 5px 1px" },
-    { "dense": "0px 0px 5px 1px" },
-    { "wide": "0px 0px 10px 1px" },
-    { "wider": "0px 0px 15px 1px" },
-    { "widest": "0px 0px 20px 1px" }
-  ]
-}
+[
+  {
+    "prefix": "bg",
+    "declaration": "background: ${color}"
+  },
+  {
+    "prefix": "border",
+    "declaration": "border-width: ${value} !important; border-color: ${color} !important; border-style: solid;",
+    "variations": {
+      "default": "4px",
+      "thinest": "1px",
+      "thiner": "2px",
+      "thin": "3px",
+      "thick": "6px",
+      "thicker": "8px",
+      "thickest": "10px",
+      "node": "0.2rem"
+    }
+  },
+  {
+    "prefix": "inner-border",
+    "declaration": "box-shadow: inset 0px 0px 0px ${value} ${color}",
+    "variations": {
+      "default": "4px" ,
+      "thinest": "1px" ,
+      "thiner": "2px" ,
+      "thin": "3px" ,
+      "thick": "6px" ,
+      "thicker": "8px" ,
+      "thickest": "10px" ,
+      "node": "0.2rem"
+    }
+  },
+  {
+    "prefix": "shadow",
+    "declaration": "box-shadow: ${value} ${color}",
+    "variations": {
+      "default": "0px 0px 7px 1px" ,
+      "densest": "0px 0px 3px 1px" ,
+      "denser": "0px 0px 5px 1px" ,
+      "dense": "0px 0px 5px 1px" ,
+      "wide": "0px 0px 10px 1px" ,
+      "wider": "0px 0px 15px 1px" ,
+      "widest": "0px 0px 20px 1px"
+    }
+  }
+]

@@ -1,4 +1,5 @@
 import { config } from "../../config/config.tool"
+import { IPreset } from "../../interfaces/preset.interface"
 import { log } from "../logger"
 
 const mapClassesIntoRules = (classes: string[]) => {
@@ -13,31 +14,52 @@ const mapClassesIntoRules = (classes: string[]) => {
 }
 
 const mapClassIntoRule = (stringClass: string) => {
-  const colorExists = config.colors?.some(color => stringClass.includes(color))
-  if (!colorExists) { return }
-
   const params = getClassInfos(stringClass)
-  // console.log({ params })
+
+  /**
+   * _ If no variations are found, maybe it's just a color like bg-primary
+   * _ So we need to check if the color exists to avoid useless computing
+   * */
+  if (!params.preset) {
+    const { colorExists } = checkOpacity(params.color)
+
+    if (!colorExists) {
+      return
+    }
+  }
+
+  /**
+   * _ If the current QoL isn't standalone (can be called without variation)
+   * _ no
+   */
+  if (!params.color && !params.preset?.standalone) {
+    return
+  }
 
   const rule = mapIntoRule(params)
-  // console.log({ rule })
-
   return rule
 }
 
-const getClassInfos = (stringClass: string): { state?: string, prefix?: string, color: string, variation?: { key: string, value: string } } => {
+const getClassInfos = (stringClass: string) => {
   const { cleanedClass, state } = getStateInfos(stringClass)
   const { cleanedColor, prefix } = getPrefixInfos(cleanedClass)
-  const { color, variation } = getVariantInfos({ cleanedColor, prefix })
+  const { preset, variation } = getPresetInfos({ cleanedColor, prefix })
 
-  // console.log({ state, color, prefix, variation })
-  return { state, color, prefix, variation }
+  return {
+    state,
+
+    color: cleanedColor,
+    prefix,
+
+    preset,
+    variation
+  }
 }
 
 const getStateInfos = (stringClass: string) => {
   let state = undefined
 
-  for (const configState of config.selectors?.states) {
+  for (const configState of config.states) {
     if (!stringClass.startsWith(configState)) { continue }
 
     state = configState
@@ -51,62 +73,67 @@ const getStateInfos = (stringClass: string) => {
 }
 
 const getPrefixInfos = (stringClass: string): { cleanedColor: string, prefix: string } => {
-  let prefix = ''
+  const prefixes = [
+    ...config.presets?.map(q => q.prefix),
+    ...config.qol?.map(q => q.prefix)
+  ]
 
-  for (const configPrefix of config.selectors.prefixes) {
-    if (!stringClass.startsWith(configPrefix)) { continue }
+  for (const prefix of prefixes) {
+    if (!stringClass.startsWith(prefix)) { continue }
 
-    prefix = configPrefix
-  }
-
-  return {
-    cleanedColor: stringClass?.slice(prefix.length + 1),
-    prefix,
-  }
-}
-
-const getVariantInfos = ({ cleanedColor, prefix }: { cleanedColor: string, prefix?: string }): { color: string, variation?: { key: string, value: string } } => {
-  // _ Handle opacity | bg-primary-10
-  const opacityDetectionRegex = new RegExp(/(?:(\w-?)+)-\d{2}$/, 'gm') // Strings that end with two digits
-  const isOpacity = opacityDetectionRegex.test(cleanedColor)
-  if (isOpacity) {
     return {
-      color: cleanedColor // Opacity is included in the color name, whoops on me for this one (and every other one tho)
-      // color: cleanedColor?.slice(0, -3),
-      // variation: {
-      //   key: 'opacity',
-      //   value: cleanedColor?.slice(-2),
-      // }
+      cleanedColor: stringClass?.slice(prefix.length + 1),
+      prefix
     }
   }
 
-  // _ Find preset variants matching the prefix from the config
-  const variants = config.presets[prefix as keyof typeof config.presets]
-  if (!variants) { return { color: cleanedColor } }
+  return null
+}
 
-  // _ Map found variants into a key/value object
-  const matchingVariants = variants
-    ?.map(v => Object.entries(v))
+const getPresetInfos = ({ cleanedColor, prefix }: { cleanedColor: string, prefix?: string }) => {
+  /**
+   * _ Find preset variants matching the prefix from the config
+   * _ Since a prefix can be in multiple presets and qol, filter every matching prefixes then flatten everything
+   * TODO fix first default occurence getting picked when duplicate
+  *  */
+  const possiblePresets = [...config.presets, ...config.qol]
+    ?.filter(p => p.prefix === prefix)
     ?.flat()
-    ?.map(([key, value]) => ({ key, value }))
-    // ?.filter(({ key }) => key !== 'default')
+  if (!possiblePresets?.length) { return { matchingPreset: null, variation: null } }
 
-  const variation = matchingVariants?.find(({ key }) => cleanedColor.endsWith(key)) || matchingVariants?.find(({ key }) => key === 'default')
-  // console.log({ variation })
+  const { colorExists } = checkOpacity(cleanedColor)
 
-  const color = variation && variation.key !== 'default'
-    ? cleanedColor?.slice(0, variation.key.length + 1)
-    : cleanedColor
+  /**
+   * Find the preset where the variations exists
+   * If the color exists, it is a preset, so use the preset
+   * */
+  const matchingPreset = colorExists || !cleanedColor
+    ? possiblePresets[0]
+    : possiblePresets?.find(({ variations }) => !variations || Object.keys(variations)?.find(v => cleanedColor.endsWith(v)))
+
+  if (!matchingPreset) {
+    log(`No preset found for ${cleanedColor || prefix}`)
+
+    return {
+      matchingPreset,
+      variation: null
+    }
+  }
+
+  const possibleVariations = (matchingPreset.variations || { default: '' })
+
+  const matchingVariation = Object.keys(possibleVariations)
+    ?.find(v => cleanedColor.endsWith(v)) || 'default'
+
+  const variation = possibleVariations[matchingVariation]
 
   return {
-    color,
-    variation
+    preset: matchingPreset,
+    variation,
   }
 }
 
-function mapIntoRule({ state, prefix, color, variation }: { state?: string, prefix?: string, color: string, variation?: { key: string, value: string } }) {  
-  const colorVar = `var(--${color})`
-
+const mapIntoRule = ({ state, prefix, color, preset, variation }) => {
   // _ Set state selector
   let stateSelector = ''
   switch (state) {
@@ -119,48 +146,45 @@ function mapIntoRule({ state, prefix, color, variation }: { state?: string, pref
       break
   }
 
-  let declaration = ''
-
-  // _ Set prefix declaration
-  // ! Don't forget to add the prefix in the selector.config root file
-  switch (prefix) {
-    case 'bg':
-      declaration = `background: ${colorVar} !important`
-      break
-
-    case 'text':
-      declaration = `color: ${colorVar} !important`
-      break
-
-    case 'border':
-      declaration = `border-width: ${variation?.value} !important; border-color: ${colorVar} !important; border-style: solid`
-      break
-
-    case 'inner-border':
-      declaration = `box-shadow: inset ${variation?.value} ${colorVar} !important`
-      break
-
-    case 'shadow':
-      declaration = `box-shadow: ${variation?.value} ${colorVar} !important`
-      break
-
-    default:
-      // _ custom rule from config file
-      const customDeclaration = config.customRules?.find((r: any) => r.prefix === prefix)?.declaration
-      if (!customDeclaration) { return }
-
-      declaration = customDeclaration?.replace('${value}', color) + ' !important'
-      break
-  }
-
-  let selector = `${prefix}-${color}`
+  let selector = `${prefix}${color ? `-${color}` : ''}`
   if (state) {
     selector = `${state}\\:${selector}${stateSelector}`
   }
 
-  const rule = `.${selector} { ${declaration} }`
+  const colorVar = `var(--${color})`
+  let declaration = preset.declaration
+    ?.replace('${value}', variation)
+    ?.replace('${color}', colorVar)
 
+  if (!declaration.endsWith(';')) {
+    declaration += ';'
+  }
+
+  if (!declaration.includes('!important')) {
+    declaration = declaration
+      ?.replace(';', ' !important;')
+  }
+
+  const rule = `.${selector} { ${declaration} }`
   return rule
+}
+
+/**
+ * _ Check if a color includes opacity (ends with 2 digits)
+ * * Opacity is included in the color name during mixin declaration
+ * */
+const checkOpacity = (color: string) => {
+  const opacityDetectionRegex = new RegExp(/(?:(\w-?)+)-\d{2}$/, 'gm') // Strings that end with two digits
+  const isOpacity = opacityDetectionRegex.test(color)
+
+  const baseColor = isOpacity ? color?.slice(0, -3) : color
+  const colorExists = config.colors?.some(configColor => configColor === baseColor)
+
+  return {
+    colorExists,
+    isOpacity,
+    baseColor
+  }
 }
 
 export {

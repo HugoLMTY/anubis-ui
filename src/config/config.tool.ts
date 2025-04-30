@@ -1,47 +1,26 @@
-import { readUserConfigFile, userConfig } from "../tools/fileHandling/configFile"
+import { IEnvConfig } from "../interfaces/config.interface";
+import { readUserConfigFile, userConfig } from "../tools/fileStuff/configFile"
 import { log } from "../tools/logger"
 
 const fs = require('fs')
 const path = require('path')
 
-interface IPreset {
-  [key: string]: string
-}
-interface IEnvConfig {
-  files: {
-    targets: string|string[],
-    ignore: string[]
-  },
-  colors: string[],
-  selectors: {
-    states: string[],
-    prefixes: string[]
-  },
-  presets: {
-    'border': IPreset[],
-    'inner-border': IPreset[],
-    'shadow': IPreset[],
-  },
-  [key: string]: any
-}
-
 const anubisConfigFolder = path.join(__dirname, '..', '..', 'src', 'config');
 const anubisConfigFiles = [
+  'qol',
   'files',
   'colors',
+  'states',
   'presets',
-  'selectors'
 ]
 
 const config = {
+  qol: [],
+  presets: [],
+
   files: { targets: [], ignore: [] },
   colors: [],
-  selectors: { states: [], prefixes: [] },
-  presets: {
-    border: [],
-    "inner-border": [],
-    shadow: [],
-  },
+  states: [],
 } as IEnvConfig
 
 const init = () => {

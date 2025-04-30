@@ -1,21 +1,19 @@
-import { config } from "../../../config/config.tool"
-import { buildCssRuleFile } from "../../fileHandling/cssFile"
-import { mapClassesIntoRules } from "../../mapping/mapClassIntoRule"
-import { getFiles } from "../../fileHandling/file.tools"
+import { getFiles } from "../fileStuff/file.tools"
+import { mapClassesIntoRules } from "../mapping/mapClassIntoRule"
+import { buildCssRuleFile } from "../fileStuff/cssFile"
+import { config } from "../../config/config.tool"
 
 const fs = require('fs')
 
 /** Fetch vue file based on config target patterns */
 const init = async () => {
   const files = await getFiles(config.files)
-  // console.log({ files })
 
   const uniqueClasses = await getUniqueClasses(files)
   const mappedRules = mapClassesIntoRules(uniqueClasses)
-  // console.log({ uniqueClasses, mappedRules })
 
   const file = buildCssRuleFile(mappedRules)
-  // console.log({ file })
+  return file
 }
 
 /** Extract detected class and map into a flat set */
@@ -27,8 +25,6 @@ const getUniqueClasses = async (files: string[]): Promise<string[]> => {
   ?.sort()
 
   const uniqueClasses = Array.from(new Set(extractedClasses))
-  // log(`${uniqueClasses?.length} classes found`)
-
   return uniqueClasses
 }
 
@@ -37,16 +33,20 @@ const extractClasses = async (filePath: string): Promise<string[]> => {
   const file = await fs.promises.readFile(filePath, 'utf-8')
   if (!file) { return [] }
 
-  const { states, prefixes } = config.selectors
+  const { states, qol, presets } = config
 
-  const partialStates = `(${states?.map(s => `${s}:`)?.join('|')})`
-  const partialPrefixes = `(${prefixes?.map(p => `${p}-`)?.join('|')})`
+  const partialPrefixes = presets?.map(p => `${p.prefix}-`)
+  const partialQol = qol?.map(q => `${q.prefix}`)
 
-  const classDetectionRegex = new RegExp(`${partialStates}?${partialPrefixes}(\\w+(-+)?)+`, 'gi')
+  const mappedPrefixes = [
+    ...partialPrefixes,
+    ...partialQol
+  ]?.join('|')
+  const mappedStates = `(${states?.map(s => `${s}:`)?.join('|')})`
 
-  const matches = file.match(classDetectionRegex)
-  if (!matches?.length) { return [] }
+  const classDetectionRegex = new RegExp(`${mappedStates}?(${mappedPrefixes})(-?(\\w+(-+)?)+)?`, 'gi')
 
+  const matches = file.match(classDetectionRegex) || []
   return matches
 }
 

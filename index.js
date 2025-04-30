@@ -2,7 +2,7 @@
 
 const { init: initConfig } = require('./dist/config/config.tool');
 const { log, logPrefix, logo } = require('./dist/tools/logger');
-const { init: initClassExtraction } = require('./dist/tools/extract/classes');
+const { init: initClassExtraction } = require('./dist/tools/extraction/extractClasses');
 
 /** List every imported colors across the projet */
 const colors = [];

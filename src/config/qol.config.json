@@ -1,0 +1,42 @@
+[
+  {
+    "prefix": "smooth",
+    "standalone": true,
+    "declaration": "transition-duration: ${value}",
+    "variations": {
+      "default": "0.1s",
+      "slowest": "0.5s",
+      "slower": "0.3s",
+      "slow": "0.2s",
+      "quick": "0.07s",
+      "quicker": "0.05s",
+      "quickest": "0.03s"
+    }
+  },
+  {
+    "prefix": "rounded",
+    "standalone": true,
+    "declaration": "border-radius: ${value}",
+    "variations": {
+      "default": "8px",
+      "square": "0px",
+      "xs": "2px",
+      "sm": "4px",
+      "md": "8px",
+      "lg": "12px",
+      "xl": "16s",
+      "very": "9999px",
+      "full": "50%",
+      "half": "100%"
+    }
+  },
+  {
+    "prefix": "border",
+    "declaration": "border-style: ${value}",
+    "variations": {
+      "solid": "solid",
+      "dashed": "dashed",
+      "dotted": "dotted"
+    }
+  }
+]
