@@ -48,6 +48,7 @@ const init = () => {
 }
 
 const checkUserConfig = () => {
+  if (!userConfig) { return }
 
   // todo - also check values
   const userConfigKeys = Object.keys(userConfig)
