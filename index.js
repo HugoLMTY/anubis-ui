@@ -40,11 +40,19 @@ function AnubisUI() {
     name: 'anubis-ui',
     configureServer(server) {
       server.watcher.on('change', async (file) => {
-        await refresh(file)
+        if (typeof process !== 'undefined' && process.versions && process.versions.node) {
+          await refresh(file)
+        } else {
+          log('Trying to build in a not Node environment, aborting')
+        }
       });
     },
     async buildStart() {
-      await init();
+      if (typeof process !== 'undefined' && process.versions && process.versions.node) {
+        await init();
+      } else {
+        log('Trying to build in a not Node environment, aborting')
+      }
     }
   };
 }
