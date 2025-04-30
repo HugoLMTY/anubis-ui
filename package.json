@@ -24,7 +24,7 @@
     "type": "git",
     "url": "git+https://github.com/HugoLMTY/anubis-ui.git"
   },
-  "author": "Improba",
+  "types": "./index.d.ts",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/HugoLMTY/anubis-ui/issues"
