@@ -43,16 +43,17 @@ const mapClassIntoRule = (stringClass: string) => {
 const getClassInfos = (stringClass: string) => {
   const { cleanedClass, state } = getStateInfos(stringClass)
   const { cleanedColor, prefix } = getPrefixInfos(cleanedClass)
-  const { preset, variation } = getPresetInfos({ cleanedColor, prefix })
+  const { baseColor, preset, variation, variationName } = getPresetInfos({ cleanedColor, prefix })
 
   return {
     state,
 
-    color: cleanedColor,
+    color: baseColor,
     prefix,
 
     preset,
-    variation
+    variation,
+    variationName
   }
 }
 
@@ -122,18 +123,24 @@ const getPresetInfos = ({ cleanedColor, prefix }: { cleanedColor: string, prefix
 
   const possibleVariations = (matchingPreset.variations || { default: '' })
 
+  const defaultVariation = 'default'
   const matchingVariation = Object.keys(possibleVariations)
-    ?.find(v => cleanedColor.endsWith(v)) || 'default'
+    ?.find(v => cleanedColor.endsWith(v))
 
-  const variation = possibleVariations[matchingVariation]
+  const variation = possibleVariations[matchingVariation || defaultVariation]
+  const baseColor = matchingVariation
+    ? cleanedColor?.slice(0, -matchingVariation?.length - 1)
+    : cleanedColor
 
   return {
+    baseColor,
     preset: matchingPreset,
+    variationName: matchingVariation,
     variation,
   }
 }
 
-const mapIntoRule = ({ state, prefix, color, preset, variation }) => {
+const mapIntoRule = ({ state, prefix, color, preset, variation, variationName }) => {
   // _ Set state selector
   let stateSelector = ''
   switch (state) {
@@ -146,7 +153,7 @@ const mapIntoRule = ({ state, prefix, color, preset, variation }) => {
       break
   }
 
-  let selector = `${prefix}${color ? `-${color}` : ''}`
+  let selector = `${prefix}${color ? `-${color}` : ''}${variationName ? `-${variationName}` : ''}`
   if (state) {
     selector = `${state}\\:${selector}${stateSelector}`
   }

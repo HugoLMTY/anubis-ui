@@ -1,3 +1,4 @@
 const AnubisUI = require('../../index')
 
-AnubisUI()?.buildStart()
+AnubisUI.plugin.buildStart()
+
