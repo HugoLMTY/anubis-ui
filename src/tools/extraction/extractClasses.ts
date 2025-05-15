@@ -1,7 +1,7 @@
 import { getFiles } from "../fileStuff/file.tools"
 import { mapClassesIntoRules } from "../mapping/mapClassIntoRule"
 import { buildCssRuleFile } from "../fileStuff/cssFile"
-import { config } from "../../config/config.tool"
+import { config } from "../config.tool"
 
 const fs = require('fs')
 

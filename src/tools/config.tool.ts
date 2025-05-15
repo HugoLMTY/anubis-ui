@@ -1,6 +1,6 @@
 import { IEnvConfig } from "../interfaces/config.interface";
-import { readUserConfigFile, userConfig } from "../tools/fileStuff/configFile"
-import { log } from "../tools/logger"
+import { readUserConfigFile, userConfig } from "./fileStuff/configFile"
+import { log } from "./logger"
 
 const fs = require('fs')
 const path = require('path')
@@ -9,7 +9,6 @@ const anubisConfigFolder = path.join(__dirname, '..', '..', 'src', 'config');
 const anubisConfigFiles = [
   'qol',
   'files',
-  'force',
   'colors',
   'states',
   'presets',
@@ -19,7 +18,6 @@ const config = {
   qol: [],
   presets: [],
 
-  /** User-given classes to force the css rule creation */
   force: [],
 
   files: { targets: [], ignore: [] },
@@ -49,6 +47,14 @@ const init = () => {
     config[file as keyof typeof config] = configToUse
   }
 
+  const forceClasses = userConfig?.['force']
+  console.log({ forceClasses })
+
+  if (forceClasses?.length) {
+    log(`Forcing the creation of ${forceClasses?.length} classes`)
+    config.force = userConfig['force']
+  }
+
   return config
 }
 
@@ -58,7 +64,7 @@ const checkUserConfig = () => {
   // todo - also check values
   const userConfigKeys = Object.keys(userConfig)
 
-  const unknownKeys = userConfigKeys?.filter(key => !anubisConfigFiles.includes(key))
+  const unknownKeys = userConfigKeys?.filter(key => !anubisConfigFiles.includes(key) && key !== 'force')
   if (!unknownKeys?.length) { return }
 
   log(`${unknownKeys?.length} unknown config keys found in user config file`)

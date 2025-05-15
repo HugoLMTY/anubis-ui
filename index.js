@@ -1,6 +1,6 @@
 "use strict";
 
-const { init: initConfig, config } = require('./dist/config/config.tool');
+const { init: initConfig, config } = require('./dist/tools/config.tool');
 const { log, logPrefix, logo } = require('./dist/tools/logger');
 const { init: initClassExtraction } = require('./dist/tools/extraction/extractClasses');
 

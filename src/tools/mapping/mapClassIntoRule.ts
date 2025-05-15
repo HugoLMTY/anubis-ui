@@ -1,4 +1,4 @@
-import { config } from "../../config/config.tool"
+import { config } from "../config.tool"
 import { IPreset } from "../../interfaces/preset.interface"
 import { log } from "../logger"
 
