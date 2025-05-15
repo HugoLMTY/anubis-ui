@@ -9,6 +9,7 @@ const anubisConfigFolder = path.join(__dirname, '..', '..', 'src', 'config');
 const anubisConfigFiles = [
   'qol',
   'files',
+  'force',
   'colors',
   'states',
   'presets',
@@ -17,6 +18,9 @@ const anubisConfigFiles = [
 const config = {
   qol: [],
   presets: [],
+
+  /** User-given classes to force the css rule creation */
+  force: [],
 
   files: { targets: [], ignore: [] },
   colors: [],
@@ -37,6 +41,7 @@ const init = () => {
     } else {
       const filePath = path.join(anubisConfigFolder, `${file}.config.json`)
       const configContent = fs.readFileSync(filePath, { encoding: 'utf-8' })
+      if (!configContent) { continue }
 
       configToUse = JSON.parse(configContent)
     }

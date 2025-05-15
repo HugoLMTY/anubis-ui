@@ -7,9 +7,7 @@ AnubisUI (Autonomous Nominative Utility Based Intuitive Styler) is a Vite plugin
 > <br />
 > Classes must be EXPLICITY written in the code to allow the extraction to work correctly, dynamic classes will not work
 > <br />
-> In the future, some config will allow to generate a bunch of specified classes even if not present in the code
-> <br />
-> Until then, you can create a decoy .vue file filled with the dynamic classes you want
+> You can use the `force` configuration to generate specific classes even if they're not present in the code
 > <br />
 
 ## Table of Contents
@@ -167,6 +165,13 @@ For every config you want to change, add the corresponding section in your confi
         "thin": "2px"
       }
     }
+  ],
+
+  // force.config.json
+  "force": [
+    "bg-primary-10",
+    "bg-primary-20",
+    "bg-primary-30"
   ]
 }
 ```
@@ -340,6 +345,29 @@ Example usage:
 ```html
 <div class="rounded-lg smooth-slow border-dashed" />
 <div class="rounded smooth" /> <!-- Works because these are standalone -->
+```
+
+### Force (`force.config.json`)
+Force the generation of specific CSS classes even if they're not found in your code. This is particularly useful for dynamic classes that can't be detected during the extraction process.
+
+<details>
+<summary>Default config</summary>
+
+```json
+[]
+```
+</details>
+
+Example usage:
+```json
+{
+  "force": [
+    "bg-primary-10",
+    "bg-primary-20",
+    "bg-primary-30",
+    "hover:bg-secondary-50"
+  ]
+}
 ```
 
 ## Available Utility Classes

@@ -22,9 +22,10 @@ const getUniqueClasses = async (files: string[]): Promise<string[]> => {
     files.map(async file => extractClasses(file))
   ))
   ?.flat()
-  ?.sort()
 
-  const uniqueClasses = Array.from(new Set(extractedClasses))
+  const classes = [...extractedClasses, ...config.force]?.sort()
+
+  const uniqueClasses = Array.from(new Set(classes))
   return uniqueClasses
 }
 
