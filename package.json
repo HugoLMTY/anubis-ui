@@ -17,7 +17,7 @@
   "scripts": {
     "dev": "rm -rf dist; npm run preinstall; node src/manual/build.js",
     "build": "tsc",
-    "preinstall": "npm run build"
+    "prepare": "npm run build"
   },
   "style": "dist/_anubis.scss",
   "repository": {
