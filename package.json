@@ -15,7 +15,7 @@
     "vue"
   ],
   "scripts": {
-    "dev": "rm -rf dist; npm run preinstall; node src/manual/build.js",
+    "dev": "rm -rf dist; npm run prepare; node src/manual/build.js",
     "build": "tsc",
     "prepare": "npm run build"
   },
