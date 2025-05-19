@@ -48,7 +48,6 @@ const init = () => {
   }
 
   const forceClasses = userConfig?.['force']
-  console.log({ forceClasses })
 
   if (forceClasses?.length) {
     log(`Forcing the creation of ${forceClasses?.length} classes`)
