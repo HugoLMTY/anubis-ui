@@ -4,6 +4,10 @@
     "declaration": "background: ${color}"
   },
   {
+    "prefix": "text",
+    "declaration": "color: ${color}"
+  },
+  {
     "prefix": "border",
     "declaration": "border-width: ${value} !important; border-color: ${color} !important; border-style: solid;",
     "variations": {

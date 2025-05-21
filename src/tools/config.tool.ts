@@ -31,18 +31,27 @@ const init = () => {
   checkUserConfig()
 
   for (const file of anubisConfigFiles) {
-    let configToUse = null
+    let configToUse = []
+
+    const filePath = path.join(anubisConfigFolder, `${file}.config.json`)
+    const configContent = fs.readFileSync(filePath, { encoding: 'utf-8' })
+    if (!configContent) { continue }
+
+    configToUse = JSON.parse(configContent)
 
     if (userConfig && userConfig[file]) {
-      log(`${file} config found, overriding default.`)
-      configToUse = userConfig[file]
-    } else {
-      const filePath = path.join(anubisConfigFolder, `${file}.config.json`)
-      const configContent = fs.readFileSync(filePath, { encoding: 'utf-8' })
-      if (!configContent) { continue }
+      log(`${file} config found, adding to default.`)
+      configToUse.push(...userConfig[file])
 
-      configToUse = JSON.parse(configContent)
+      configToUse = configToUse.filter(({ prefix }, index) => {
+        return configToUse.findIndex(item => item.prefix === prefix) === index
+      })
+
+      if (file === 'presets') {
+        console.log({ configToUse })
+      }
     }
+
 
     config[file as keyof typeof config] = configToUse
   }
