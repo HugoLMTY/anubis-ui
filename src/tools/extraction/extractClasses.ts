@@ -37,7 +37,7 @@ const extractClasses = async (filePath: string): Promise<string[]> => {
   const { states, qol, presets } = config
 
   const partialPrefixes = presets?.map(p => `${p.prefix}-`)
-  const partialQol = qol?.map(q => `${q.prefix}`)
+  const partialQol = qol?.map(q => q.standalone ? `${q.prefix}` : `${q.prefix}-`)
 
   const mappedPrefixes = [
     ...partialPrefixes,
@@ -45,7 +45,7 @@ const extractClasses = async (filePath: string): Promise<string[]> => {
   ]?.join('|')
   const mappedStates = `(${states?.map(s => `${s}:`)?.join('|')})`
 
-  const classDetectionRegex = new RegExp(`${mappedStates}?(${mappedPrefixes})(-?(\\w+(-+)?)+)?`, 'gi')
+  const classDetectionRegex = new RegExp(`${mappedStates}?(${mappedPrefixes})(-?(\\w+(-+)?)+)?`, 'g')
 
   const matches = file.match(classDetectionRegex) || []
   return matches
