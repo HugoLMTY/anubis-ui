@@ -1,5 +1,13 @@
 [
   {
+    "prefix": "blur",
+    "standalone": true,
+    "declaration": "backdrop-filter: blur(${value})",
+    "variations": {
+      "default": "3px"
+    }
+  },
+  {
     "prefix": "smooth",
     "standalone": true,
     "declaration": "transition-duration: ${value}",
@@ -37,6 +45,14 @@
       "solid": "solid",
       "dashed": "dashed",
       "dotted": "dotted"
+    }
+  },
+  {
+    "prefix": "position",
+    "declaration": "position: ${value}",
+    "variations": {
+      "relative": "relative",
+      "absolute": "absolute"
     }
   }
 ]
