@@ -88,7 +88,8 @@ const getPrefixInfos = (stringClass: string): { cleanedColor: string, prefix: st
     }
   }
 
-  return null
+  console.log({ prefixes, stringClass })
+  return { cleanedColor: stringClass, prefix: null }
 }
 
 const getPresetInfos = ({ cleanedColor, prefix }: { cleanedColor: string, prefix?: string }) => {
