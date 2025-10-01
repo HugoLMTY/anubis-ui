@@ -126,7 +126,7 @@ const getPresetInfos = ({ cleanedColor, prefix }: { cleanedColor: string, prefix
 
   const defaultVariation = 'default'
   const matchingVariation = Object.keys(possibleVariations)
-    ?.find(v => cleanedColor.endsWith(v))
+    ?.find(v => cleanedColor === v || cleanedColor.endsWith(v))
 
   const variation = possibleVariations[matchingVariation || defaultVariation]
   const baseColor = matchingVariation
