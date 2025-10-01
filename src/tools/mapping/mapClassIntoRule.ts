@@ -29,10 +29,10 @@ const mapClassIntoRule = (stringClass: string) => {
   }
 
   /**
-   * _ If the current QoL isn't standalone (can be called without variation)
-   * _ no
+   * _ If the current QoL isn't standalone and doesn't have a variation (can be called without variation)
+   * _ then no
    */
-  if (!params.color && !params.preset?.standalone) {
+  if (!params.color && !params.preset?.standalone && !params.variationName) {
     return
   }
 
