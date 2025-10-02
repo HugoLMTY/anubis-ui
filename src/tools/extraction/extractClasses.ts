@@ -1,7 +1,8 @@
 import { getFiles } from "../fileStuff/file.tools"
 import { mapClassesIntoRules } from "../mapping/mapClassIntoRule"
-import { buildCssRuleFile } from "../fileStuff/cssFile"
+import { writeCssRuleFile } from "../fileStuff/css.file"
 import { config } from "../config.tool"
+import { mapColorsIntoMixinDeclaration } from "../mapping/mapColorIntoDeclaration"
 
 const fs = require('fs')
 
@@ -9,10 +10,12 @@ const fs = require('fs')
 const init = async () => {
   const files = await getFiles(config.files)
 
+  const mappedColors = mapColorsIntoMixinDeclaration(config.colors)
+
   const uniqueClasses = await getUniqueClasses(files)
   const mappedRules = mapClassesIntoRules(uniqueClasses)
 
-  const file = buildCssRuleFile(mappedRules)
+  const file = writeCssRuleFile(mappedColors, mappedRules)
   return file
 }
 
