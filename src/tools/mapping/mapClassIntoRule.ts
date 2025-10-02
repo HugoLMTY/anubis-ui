@@ -1,19 +1,55 @@
 import { config } from "../config.tool"
-import { IPreset } from "../../interfaces/preset.interface"
 import { log } from "../logger"
 
 const mapClassesIntoRules = (classes: string[]) => {
-  const mappedRules = classes
+  const usedColors = new Set<string>()
+  const usedVariants = new Map<string, string>()
+  const ruleInfos = classes
     ?.map(cssClass => mapClassIntoRule(cssClass))
-    ?.filter(rule => rule)
+    ?.filter(ruleInfo => ruleInfo !== null)
 
-  log(`${mappedRules?.length} rules generated`)
+  // Collecter les couleurs et variants utilisés dans les règles générées
+  ruleInfos.forEach(ruleInfo => {
+    if (ruleInfo.color) {
+      usedColors.add(ruleInfo.color)
+    }
+    if (ruleInfo.variant && ruleInfo.variant.shouldExport) {
+      const variableName = `${ruleInfo.variant.prefix}-${ruleInfo.variant.variantName}`
+      usedVariants.set(variableName, ruleInfo.variant.variantValue)
+    }
+  })
 
-  const rules = mappedRules?.join('\n')
-  return rules
+  // Générer les règles CSS
+  const rules = generateCssRules(ruleInfos)
+
+  log(`${ruleInfos.length} rules generated`)
+
+  return {
+    rules,
+    colorsFromRules: Array.from(usedColors),
+    variantsFromRules: Object.fromEntries(usedVariants)
+  }
 }
 
-const mapClassIntoRule = (stringClass: string) => {
+const generateCssRules = (ruleInfos: RuleInfo[]): string => {
+  return ruleInfos
+    .map(ruleInfo => `.${ruleInfo.selector} { ${ruleInfo.declaration} }`)
+    .join('\n')
+}
+
+interface RuleInfo {
+  selector: string
+  declaration: string
+  color?: string
+  variant?: {
+    prefix: string
+    variantName: string
+    variantValue: string
+    shouldExport: boolean
+  }
+}
+
+const mapClassIntoRule = (stringClass: string): RuleInfo | null => {
   const params = getClassInfos(stringClass)
 
   /**
@@ -24,7 +60,7 @@ const mapClassIntoRule = (stringClass: string) => {
     const { colorExists } = checkOpacity(params.color)
 
     if (!colorExists) {
-      return
+      return null
     }
   }
 
@@ -33,11 +69,11 @@ const mapClassIntoRule = (stringClass: string) => {
    * _ then no
    */
   if (!params.color && !params.preset?.standalone && !params.variationName) {
-    return
+    return null
   }
 
-  const rule = mapIntoRule(params)
-  return rule
+  const ruleInfo = buildRuleInfo(params)
+  return ruleInfo
 }
 
 const getClassInfos = (stringClass: string) => {
@@ -141,7 +177,7 @@ const getPresetInfos = ({ cleanedColor, prefix }: { cleanedColor: string, prefix
   }
 }
 
-const mapIntoRule = ({ state, prefix, color, preset, variation, variationName }) => {
+const buildRuleInfo = ({ state, prefix, color, preset, variation, variationName }): RuleInfo | null => {
   // _ Set state selector
   let stateSelector = ''
   switch (state) {
@@ -155,14 +191,49 @@ const mapIntoRule = ({ state, prefix, color, preset, variation, variationName })
   }
 
   let selector = `${prefix}${color ? `-${color}` : ''}${variationName ? `-${variationName}` : ''}`
+
   if (state) {
     selector = `${state}\\:${selector}${stateSelector}`
   }
 
-  const colorVar = `var(--${color})`
+  // Vérifier que la couleur existe dans la config
+  if (color && !config.colors?.[color]) {
+    log(`Color '${color}' not found in colors config - skipping rule generation`)
+    return null
+  }
+
+  // Gérer les variants avec variables SCSS
+  let variableToUse = variation
+  let variantInfo = undefined
+
+  // Vérifier si on doit exporter ce variant
+  const shouldExport = preset?.["export-variations"] === true || preset?.["export-variations"] === "always"
+
+  if (variationName && variationName !== 'default') {
+    const variablePrefix = prefix
+    const variableName = `${variablePrefix}-${variationName}`
+    variableToUse = `$${variableName}`
+    variantInfo = {
+      prefix,
+      variantName: variationName,
+      variantValue: variation,
+      shouldExport
+    }
+  } else if (variation && variationName === 'default') {
+    // Pour les variants par défaut, on utilise juste le prefix
+    const variableName = `${prefix}-default`
+    variableToUse = `$${variableName}`
+    variantInfo = {
+      prefix,
+      variantName: 'default',
+      variantValue: variation,
+      shouldExport
+    }
+  }
+
   let declaration = preset.declaration
-    ?.replace('${value}', variation)
-    ?.replace('${color}', colorVar)
+    ?.replace('${value}', variableToUse)
+    ?.replace('${color}', color ? `$${color}` : '')
 
   if (!declaration.endsWith(';')) {
     declaration += ';'
@@ -173,8 +244,12 @@ const mapIntoRule = ({ state, prefix, color, preset, variation, variationName })
       ?.replace(';', ' !important;')
   }
 
-  const rule = `.${selector} { ${declaration} }`
-  return rule
+  return {
+    selector,
+    declaration,
+    color: color || undefined,
+    variant: variantInfo
+  }
 }
 
 /**
@@ -186,7 +261,7 @@ const checkOpacity = (color: string) => {
   const isOpacity = opacityDetectionRegex.test(color)
 
   const baseColor = isOpacity ? color?.slice(0, -3) : color
-  const colorExists = config.colors?.some(configColor => configColor === baseColor)
+  const colorExists = Object.keys(config.colors || {}).includes(baseColor)
 
   return {
     colorExists,
