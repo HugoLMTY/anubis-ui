@@ -13,7 +13,7 @@ export interface IEnvConfig {
   /** User-given classes to force the css rule creation */
   force: string[],
 
-  colors: string[],
+  colors: Record<string, string>,
   states: string[],
   [key: string]: any
 }

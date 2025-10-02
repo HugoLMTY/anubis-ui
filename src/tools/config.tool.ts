@@ -21,7 +21,7 @@ const config = {
   force: [],
 
   files: { targets: [], ignore: [] },
-  colors: [],
+  colors: {},
   states: [],
 } as IEnvConfig
 

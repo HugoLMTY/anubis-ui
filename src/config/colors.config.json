@@ -1,9 +1,11 @@
-[
-  "primary",
-  "secondary",
-  "accent",
-  "neutral",
-  "success",
-  "warning",
-  "danger"
-]
+{
+  "primary": "#3b82f6",
+  "secondary": "#6b7280",
+  "accent": "#8b5cf6",
+  "neutral": "#374151",
+  "success": "#10b981",
+  "warning": "#f59e0b",
+  "danger": "#ef4444",
+  "white": "#ffffff",
+  "black": "#000000"
+}
