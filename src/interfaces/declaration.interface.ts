@@ -4,7 +4,4 @@ export interface IDeclaration {
 
   /** Hexadecimal color code */
   color: string|number
-
-  // light?: string
-  // dark?: string
 }

@@ -1,5 +1,5 @@
 import { IEnvConfig } from "../interfaces/config.interface";
-import { readUserConfigFile, userConfig } from "./fileStuff/configFile"
+import { readUserConfigFile, checkUserConfigFile, userConfig } from "./fileStuff/config.file"
 import { log } from "./logger"
 
 const fs = require('fs')
@@ -21,14 +21,13 @@ const config = {
   force: [],
 
   files: { targets: [], ignore: [] },
-  colors: [],
+  colors: {},
   states: [],
 } as IEnvConfig
 
 const init = () => {
   readUserConfigFile()
-
-  checkUserConfig()
+  checkUserConfigFile(anubisConfigFiles)
 
   for (const file of anubisConfigFiles) {
     let configToUse = null
@@ -55,21 +54,6 @@ const init = () => {
   }
 
   return config
-}
-
-const checkUserConfig = () => {
-  if (!userConfig) { return }
-
-  // todo - also check values
-  const userConfigKeys = Object.keys(userConfig)
-
-  const unknownKeys = userConfigKeys?.filter(key => !anubisConfigFiles.includes(key) && key !== 'force')
-  if (!unknownKeys?.length) { return }
-
-  log(`${unknownKeys?.length} unknown config keys found in user config file`)
-  for (const key of unknownKeys) {
-    log(`- ${key}`)
-  }
 }
 
 export {

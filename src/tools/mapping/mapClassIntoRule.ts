@@ -1,5 +1,4 @@
 import { config } from "../config.tool"
-import { IPreset } from "../../interfaces/preset.interface"
 import { log } from "../logger"
 
 const mapClassesIntoRules = (classes: string[]) => {
@@ -21,7 +20,7 @@ const mapClassIntoRule = (stringClass: string) => {
    * _ So we need to check if the color exists to avoid useless computing
    * */
   if (!params.preset) {
-    const { colorExists } = checkOpacity(params.color)
+    const { colorExists } = getColorInfos(params.color)
 
     if (!colorExists) {
       return
@@ -103,7 +102,7 @@ const getPresetInfos = ({ cleanedColor, prefix }: { cleanedColor: string, prefix
     ?.flat()
   if (!possiblePresets?.length) { return { matchingPreset: null, variation: null } }
 
-  const { colorExists } = checkOpacity(cleanedColor)
+  const { colorExists } = getColorInfos(cleanedColor)
 
   /**
    * Find the preset where the variations exists
@@ -111,7 +110,7 @@ const getPresetInfos = ({ cleanedColor, prefix }: { cleanedColor: string, prefix
    * */
   const matchingPreset = colorExists || !cleanedColor
     ? possiblePresets[0]
-    : possiblePresets?.find(({ variations }) => !variations || Object.keys(variations)?.find(v => cleanedColor.endsWith(v)))
+    : possiblePresets?.find(({ variations }) => !variations || Object.keys(variations)?.find(v => cleanedColor === v || cleanedColor.endsWith(v)))
 
   if (!matchingPreset) {
     log(`No preset found for ${cleanedColor || prefix}`)
@@ -122,11 +121,28 @@ const getPresetInfos = ({ cleanedColor, prefix }: { cleanedColor: string, prefix
     }
   }
 
+  if (!colorExists && !matchingPreset?.variations) {
+    log(`Unknow stuff -> ${prefix} ${cleanedColor}}`)
+
+    return {
+      matchingPreset,
+      variation: null
+    }
+  }
+
   const possibleVariations = (matchingPreset.variations || { default: '' })
 
   const defaultVariation = 'default'
-  const matchingVariation = Object.keys(possibleVariations)
-    ?.find(v => cleanedColor === v || cleanedColor.endsWith(v))
+  /** What is happening here:
+   * xl variation can be matched when looking for 2xl, check for exact first
+   * i don't remember why but we need the endsWith in some edge cases
+   */
+  const exactVariation = Object.keys(possibleVariations)
+    ?.find(v => cleanedColor === v)
+  const closestVariation = Object.keys(possibleVariations)
+    ?.find(v => cleanedColor.endsWith(v))
+
+  const matchingVariation = exactVariation || closestVariation
 
   const variation = possibleVariations[matchingVariation || defaultVariation]
   const baseColor = matchingVariation
@@ -181,12 +197,12 @@ const mapIntoRule = ({ state, prefix, color, preset, variation, variationName })
  * _ Check if a color includes opacity (ends with 2 digits)
  * * Opacity is included in the color name during mixin declaration
  * */
-const checkOpacity = (color: string) => {
+const getColorInfos = (color: string) => {
   const opacityDetectionRegex = new RegExp(/(?:(\w-?)+)-\d{2}$/, 'gm') // Strings that end with two digits
   const isOpacity = opacityDetectionRegex.test(color)
 
   const baseColor = isOpacity ? color?.slice(0, -3) : color
-  const colorExists = config.colors?.some(configColor => configColor === baseColor)
+  const colorExists = Object.keys(config.colors)?.some(configColor => configColor === baseColor)
 
   return {
     colorExists,

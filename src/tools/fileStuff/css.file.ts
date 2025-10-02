@@ -1,7 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 
-import { cssHeader, log } from '../logger'
+import { log } from '../logger'
+import { getHeader } from '../output/css.output'
 
 const srcDir = path.join(process.cwd(), 'src', 'css')
 const outputPath = path.join(srcDir, '_anubis.scss')
@@ -19,11 +20,13 @@ const checkCssRuleFilePresence = () => {
   }
 }
 
-const buildCssRuleFile = (classes: string = '') => {
+const writeCssRuleFile = (colors: string = '', classes: string = '') => {
   try {
     checkCssRuleFilePresence()
 
-    fs.writeFileSync(outputPath, cssHeader + '\n' + classes)
+    const content = `${getHeader()}\n\n${colors}\n\n${classes}`
+
+    fs.writeFileSync(outputPath, content)
 
     return outputPath
   } catch (err: any) {
@@ -33,5 +36,5 @@ const buildCssRuleFile = (classes: string = '') => {
 
 export {
   checkCssRuleFilePresence,
-  buildCssRuleFile
+  writeCssRuleFile
 }
