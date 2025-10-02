@@ -1,40 +1,43 @@
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs';
+import path from 'path';
 
-import { log } from '../logger'
-import { getHeader } from '../output/css.output'
+import { log } from '../logger';
+import { getHeader } from '../output/css.output';
 
-const srcDir = path.join(process.cwd(), 'src', 'css')
-const outputPath = path.join(srcDir, '_anubis.scss')
+const srcDir = path.join(process.cwd(), 'src', 'css');
+const outputPath = path.join(srcDir, '_anubis.scss');
 
 const checkCssRuleFilePresence = () => {
-  try {
-    fs.mkdirSync(srcDir, { recursive: true })
+    try {
+        fs.mkdirSync(srcDir, { recursive: true });
 
-    if (fs.existsSync(outputPath)) { return }
+        if (fs.existsSync(outputPath)) {
+            return;
+        }
 
-    log('Output file missing, generating..')
-    fs.writeFileSync(outputPath, '')
-  } catch (err: any) {
-    throw new Error(`Erreur lors de la vérification du fichier CSS: ${err.message}`)
-  }
-}
+        log('Output file missing, generating..');
+        fs.writeFileSync(outputPath, '');
+    } catch (err: any) {
+        throw new Error(
+            `Erreur lors de la vérification du fichier CSS: ${err.message}`
+        );
+    }
+};
 
 const writeCssRuleFile = (colors: string = '', classes: string = '') => {
-  try {
-    checkCssRuleFilePresence()
+    try {
+        checkCssRuleFilePresence();
 
-    const content = `${getHeader()}\n\n${colors}\n\n${classes}`
+        const content = `${getHeader()}\n\n${colors}\n\n${classes}`;
 
-    fs.writeFileSync(outputPath, content)
+        fs.writeFileSync(outputPath, content);
 
-    return outputPath
-  } catch (err: any) {
-    throw new Error(`Erreur lors de l'écriture du fichier CSS: ${err.message}`)
-  }
-}
+        return outputPath;
+    } catch (err: any) {
+        throw new Error(
+            `Erreur lors de l'écriture du fichier CSS: ${err.message}`
+        );
+    }
+};
 
-export {
-  checkCssRuleFilePresence,
-  writeCssRuleFile
-}
+export { checkCssRuleFilePresence, writeCssRuleFile };

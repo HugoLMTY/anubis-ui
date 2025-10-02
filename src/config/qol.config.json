@@ -58,6 +58,7 @@
   {
     "prefix": "size",
     "declaration": "font-size: ${value} !important",
+    "export-variations": "always",
     "variations": {
       "2xs": "10px",
       "xs": "12px",
@@ -74,5 +75,15 @@
       "8xl": "96px",
       "9xl": "128px"
     }
+  },
+  {
+    "prefix": "weight",
+    "declaration": "font-weight: ${value} !important",
+    "export-variations": true,
+    "variations": {
+      "normal": "600",
+      "bold": "900"
+    }
   }
 ]
+
