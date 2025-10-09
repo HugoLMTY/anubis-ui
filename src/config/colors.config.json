@@ -1,9 +1,242 @@
-[
-  "primary",
-  "secondary",
-  "accent",
-  "neutral",
-  "success",
-  "warning",
-  "danger"
-]
+{
+  "none": {
+    "light": "transparent",
+    "dark": "transparent"
+  },
+  "text": {
+    "light": "#000",
+    "dark": "#fff"
+  },
+  "text-invert": {
+    "light": "#fff",
+    "dark": "#000"
+  },
+  "text-link": {
+    "light": "#0a5a8a",
+    "dark": "#0f84cb"
+  },
+  "accent": {
+    "light": "#0f84cb",
+    "dark": "#1a94db"
+  },
+  "accent-lowest": {
+    "light": "#f0f8ff",
+    "dark": "#082a3f"
+  },
+  "accent-lower": {
+    "light": "#e1f2ff",
+    "dark": "#0a5a8a"
+  },
+  "accent-low": {
+    "light": "#b3d9ff",
+    "dark": "#0e6b9a"
+  },
+  "accent-medium": {
+    "light": "#0f84cb",
+    "dark": "#1a94db"
+  },
+  "accent-high": {
+    "light": "#0c6ba3",
+    "dark": "#b3d9ff"
+  },
+  "accent-higher": {
+    "light": "#094a7a",
+    "dark": "#e1f2ff"
+  },
+  "accent-highest": {
+    "light": "#082a3f",
+    "dark": "#f0f8ff"
+  },
+  "primary": {
+    "light": "#0f84cb",
+    "dark": "#1a94db"
+  },
+  "primary-lowest": {
+    "light": "#f0f8ff",
+    "dark": "#082a3f"
+  },
+  "primary-lower": {
+    "light": "#e1f2ff",
+    "dark": "#0a5a8a"
+  },
+  "primary-low": {
+    "light": "#b3d9ff",
+    "dark": "#0e6b9a"
+  },
+  "primary-medium": {
+    "light": "#0f84cb",
+    "dark": "#1a94db"
+  },
+  "primary-high": {
+    "light": "#0c6ba3",
+    "dark": "#b3d9ff"
+  },
+  "primary-higher": {
+    "light": "#094a7a",
+    "dark": "#e1f2ff"
+  },
+  "primary-highest": {
+    "light": "#082a3f",
+    "dark": "#f0f8ff"
+  },
+  "secondary": {
+    "light": "#3b5161",
+    "dark": "#4a5f6f"
+  },
+  "secondary-lowest": {
+    "light": "#f5f7f8",
+    "dark": "#1e2a30"
+  },
+  "secondary-lower": {
+    "light": "#e8ecf0",
+    "dark": "#2a3a42"
+  },
+  "secondary-low": {
+    "light": "#b3c2cc",
+    "dark": "#354a55"
+  },
+  "secondary-medium": {
+    "light": "#3b5161",
+    "dark": "#4a5f6f"
+  },
+  "secondary-high": {
+    "light": "#2f404e",
+    "dark": "#b3c2cc"
+  },
+  "secondary-higher": {
+    "light": "#232f3a",
+    "dark": "#e8ecf0"
+  },
+  "secondary-highest": {
+    "light": "#1e2a30",
+    "dark": "#f5f7f8"
+  },
+  "neutral": {
+    "light": "#64748b",
+    "dark": "#64748b"
+  },
+  "neutral-lowest": {
+    "light": "#ffffff",
+    "dark": "#0f172a"
+  },
+  "neutral-lower": {
+    "light": "#f1f5f9",
+    "dark": "#475569"
+  },
+  "neutral-low": {
+    "light": "#cbd5e1",
+    "dark": "#475569"
+  },
+  "neutral-medium": {
+    "light": "#64748b",
+    "dark": "#64748b"
+  },
+  "neutral-high": {
+    "light": "#475569",
+    "dark": "#cbd5e1"
+  },
+  "neutral-higher": {
+    "light": "#1e293b",
+    "dark": "#f1f5f9"
+  },
+  "neutral-highest": {
+    "light": "#141e57",
+    "dark": "#ffffff"
+  },
+  "success": {
+    "light": "#00c99e",
+    "dark": "#25e2b3"
+  },
+  "success-lowest": {
+    "light": "#eafff7",
+    "dark": "#00302a"
+  },
+  "success-lower": {
+    "light": "#cdfeeb",
+    "dark": "#006756"
+  },
+  "success-low": {
+    "light": "#63f2ca",
+    "dark": "#00a481"
+  },
+  "success-medium": {
+    "light": "#00c99e",
+    "dark": "#25e2b3"
+  },
+  "success-high": {
+    "light": "#00836b",
+    "dark": "#63f2ca"
+  },
+  "success-higher": {
+    "light": "#005548",
+    "dark": "#cdfeeb"
+  },
+  "success-highest": {
+    "light": "#00302a",
+    "dark": "#eafff7"
+  },
+  "danger": {
+    "light": "#e64d4b",
+    "dark": "#f17a78"
+  },
+  "danger-lowest": {
+    "light": "#fdf3f3",
+    "dark": "#420e0d"
+  },
+  "danger-lower": {
+    "light": "#fde3e3",
+    "dark": "#932221"
+  },
+  "danger-low": {
+    "light": "#f8aaa9",
+    "dark": "#d3312f"
+  },
+  "danger-medium": {
+    "light": "#e64d4b",
+    "dark": "#f17a78"
+  },
+  "danger-high": {
+    "light": "#b12624",
+    "dark": "#f8aaa9"
+  },
+  "danger-higher": {
+    "light": "#7a2322",
+    "dark": "#fde3e3"
+  },
+  "danger-highest": {
+    "light": "#420e0d",
+    "dark": "#fdf3f3"
+  },
+  "warning": {
+    "light": "#ff9a00",
+    "dark": "#ffbd1b"
+  },
+  "warning-lowest": {
+    "light": "#fffbea",
+    "dark": "#481700"
+  },
+  "warning-lower": {
+    "light": "#fff3c5",
+    "dark": "#983c08"
+  },
+  "warning-low": {
+    "light": "#ffd346",
+    "dark": "#e27300"
+  },
+  "warning-medium": {
+    "light": "#ff9a00",
+    "dark": "#ffbd1b"
+  },
+  "warning-high": {
+    "light": "#bb4e02",
+    "dark": "#ffd346"
+  },
+  "warning-higher": {
+    "light": "#7c310b",
+    "dark": "#fff3c5"
+  },
+  "warning-highest": {
+    "light": "#481700",
+    "dark": "#fffbea"
+  }
+}

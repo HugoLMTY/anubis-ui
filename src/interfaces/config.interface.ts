@@ -1,3 +1,4 @@
+import { IColor } from "./color.interface"
 import { IPreset } from "./preset.interface"
 
 export interface IFilePatterns {
@@ -13,7 +14,7 @@ export interface IEnvConfig {
   /** User-given classes to force the css rule creation */
   force: string[],
 
-  colors: string[],
+  colors: IColor,
   states: string[],
   [key: string]: any
 }
