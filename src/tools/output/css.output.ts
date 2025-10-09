@@ -31,13 +31,14 @@ $background-opacity: (
       }
     }
   }
-}`
+}
+`
 
 const defineColor = (colorName: string, light: string, dark?: string) => {
-  let definition = `@include setRootColors($${colorName}, ${light}, 'body--light');`
+  let definition = `@include setRootColors('${colorName}', ${light}, 'body--light');`
 
   if (dark) {
-    definition += `\n@include setRootColors($${colorName}, ${dark}, 'body--dark');`
+    definition += `\n@include setRootColors('${colorName}', ${dark}, 'body--dark');`
   }
 
   return definition
