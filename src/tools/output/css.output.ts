@@ -20,16 +20,18 @@ $background-opacity: (
   90: 0.9
 );
 
-// Mixin that will autimatically generate colors for light (and optionaly) dark themes (with opacity variations)
-@mixin setRootColors ($name, $lightColor, $darkColor: null) {
+// Mixin that will autimatically generate colors for light and/or dark themes (with opacity variations)
+@mixin setRootColors ($name, $lightColor: null, $darkColor: null) {
   :root {
-    body.body--light {
-      #{"--"+$name}: $lightColor;
+    @if $lightColor != null {
+      body.body--light {
+        #{"--"+$name}: $lightColor;
 
-      // Only generate opacity variations for non transparent colors
-      @if $lightColor != transparent {
-        @each $opacity, $multiplier in $background-opacity {
-          #{"--"+$name+"-"+$opacity}: #{rgba(red($lightColor), green($lightColor), blue($lightColor), $multiplier)};
+        // Only generate opacity variations for non transparent colors
+        @if $lightColor != transparent {
+          @each $opacity, $multiplier in $background-opacity {
+            #{"--"+$name+"-"+$opacity}: #{rgba(red($lightColor), green($lightColor), blue($lightColor), $multiplier)};
+          }
         }
       }
     }
@@ -50,7 +52,12 @@ $background-opacity: (
 }
 `;
 
-const defineColor = (colorName: string, light: string, dark?: string) => {
+const defineColor = (colorName: string, light?: string, dark?: string) => {
+    // Handle cases where only dark is provided
+    if (!light && dark) {
+        return `@include setRootColors('${colorName}', null, ${dark});`;
+    }
+    // Handle cases where only light is provided or both are provided
     return `@include setRootColors('${colorName}', ${light}${
         dark ? ', ' + dark : ''
     });`;
