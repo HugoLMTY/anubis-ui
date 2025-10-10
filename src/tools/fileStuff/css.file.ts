@@ -24,11 +24,11 @@ const checkCssRuleFilePresence = () => {
     }
 };
 
-const writeCssRuleFile = (colors: string = '', classes: string = '') => {
+const writeCssRuleFile = (colors: string = '', variants: string = '', classes: string = '') => {
     try {
         checkCssRuleFilePresence();
 
-        const content = `${getHeader()}\n\n${colors}\n\n${classes}`;
+        const content = `${getHeader()}\n${colors}\n\n${variants}\n\n${classes}`;
 
         fs.writeFileSync(outputPath, content);
 
@@ -40,4 +40,4 @@ const writeCssRuleFile = (colors: string = '', classes: string = '') => {
     }
 };
 
-export { checkCssRuleFilePresence, writeCssRuleFile };
+export { writeCssRuleFile };

@@ -1,10 +1,11 @@
-const { version } = require('./../../../package.json')
+import packageJson from '../../../package.json';
+const { version } = packageJson;
 
-const header = `/*!
- * * Anubis v.${version}
- * * Improba
- * * Released under the MIT License.
- * */`
+const header = `/**
+ * Anubis v.${version}
+ * Improba
+ * Released under the MIT License.
+ */`;
 
 const mixin = `
 $background-opacity: (
@@ -19,36 +20,44 @@ $background-opacity: (
   90: 0.9
 );
 
-@mixin setRootColors ($name, $color, $theme) {
+// Mixin that will autimatically generate colors for light (and optionaly) dark themes (with opacity variations)
+@mixin setRootColors ($name, $lightColor, $darkColor: null) {
   :root {
-    body.#{$theme} {
-      #{"--"+$name}: $color;
+    body.body--light {
+      #{"--"+$name}: $lightColor;
 
-      @if $color != transparent {
+      // Only generate opacity variations for non transparent colors
+      @if $lightColor != transparent {
         @each $opacity, $multiplier in $background-opacity {
-          #{"--"+$name+"-"+$opacity}: #{rgba(red($color), green($color), blue($color), $multiplier)};
+          #{"--"+$name+"-"+$opacity}: #{rgba(red($lightColor), green($lightColor), blue($lightColor), $multiplier)};
+        }
+      }
+    }
+
+    @if $darkColor != null {
+      body.body--dark {
+        #{"--"+$name}: $darkColor;
+
+        // Only generate opacity variations for non transparent colors
+        @if $darkColor != transparent {
+          @each $opacity, $multiplier in $background-opacity {
+            #{"--"+$name+"-"+$opacity}: #{rgba(red($darkColor), green($darkColor), blue($darkColor), $multiplier)};
+          }
         }
       }
     }
   }
 }
-`
+`;
 
 const defineColor = (colorName: string, light: string, dark?: string) => {
-  let definition = `@include setRootColors('${colorName}', ${light}, 'body--light');`
-
-  if (dark) {
-    definition += `\n@include setRootColors('${colorName}', ${dark}, 'body--dark');`
-  }
-
-  return definition
-}
+    return `@include setRootColors('${colorName}', ${light}${
+        dark ? ', ' + dark : ''
+    });`;
+};
 
 const getHeader = () => {
-  return `${header}${mixin}`
-}
+    return `${header}${mixin}`;
+};
 
-export {
-  getHeader,
-  defineColor,
-}
+export { getHeader, defineColor };

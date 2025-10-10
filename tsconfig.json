@@ -6,8 +6,9 @@
     "module": "commonjs",
     "target": "es2019",
     "skipLibCheck": true,  // Ignore la vérification des fichiers .d.ts dans node_modules
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "resolveJsonModule": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "package.json"],
   "exclude": ["node_modules", "dist"]
 }

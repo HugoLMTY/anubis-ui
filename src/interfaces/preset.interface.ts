@@ -1,7 +1,3 @@
-export interface IVariation {
-  [key: string]: string
-}
-
 export interface IPreset {
   // [key: string]: string
   prefix: string,
@@ -9,9 +5,6 @@ export interface IPreset {
 
   /** When true, class can be called without variation, creating a rule with default variation */
   standalone?: boolean,
-
-  /**In a quasar project (quasar.variabls.scss), will set as !default the precised key with the default variations */
-  globalVariableOverride?: string,
 
   /**
    * Controls how variations are exported as SCSS variables:
@@ -22,5 +15,5 @@ export interface IPreset {
   "export-variations"?: boolean | "always",
 
   /** List of every possible variations */
-  variations: IVariation
+  variations: { [key: string]: string }
 }

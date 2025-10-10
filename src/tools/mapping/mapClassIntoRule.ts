@@ -2,17 +2,13 @@ import { config } from '../config.tool';
 import { log } from '../logger';
 
 const mapClassesIntoRules = (classes: string[]) => {
-    const usedColors = new Set<string>();
     const usedVariants = new Map<string, string>();
     const ruleInfos = classes
-        ?.map(cssClass => mapClassIntoRule(cssClass))
-        ?.filter(ruleInfo => ruleInfo !== null);
+        .map(cssClass => mapClassIntoRule(cssClass))
+        .filter(ruleInfo => ruleInfo !== null);
 
-    // Collecter les couleurs et variants utilisés dans les règles générées
+    // Collecter les variants utilisés dans les règles générées
     ruleInfos.forEach(ruleInfo => {
-        if (ruleInfo.color) {
-            usedColors.add(ruleInfo.color);
-        }
         if (ruleInfo.variant && ruleInfo.variant.shouldExport) {
             const variableName = `${ruleInfo.variant.prefix}-${ruleInfo.variant.variantName}`;
             usedVariants.set(variableName, ruleInfo.variant.variantValue);
@@ -26,7 +22,6 @@ const mapClassesIntoRules = (classes: string[]) => {
 
     return {
         rules,
-        colorsFromRules: Array.from(usedColors),
         variantsFromRules: Object.fromEntries(usedVariants),
     };
 };
@@ -97,19 +92,14 @@ const getClassInfos = (stringClass: string) => {
 };
 
 const getStateInfos = (stringClass: string) => {
-    let state = undefined;
+    const state = config.states.find(configState =>
+        stringClass.startsWith(configState)
+    );
 
-    for (const configState of config.states) {
-        if (!stringClass.startsWith(configState)) {
-            continue;
-        }
-
-        state = configState;
-    }
-
-    const cleanedClass = !!state
-        ? stringClass?.slice(state?.length + 1)
+    const cleanedClass = state
+        ? stringClass.slice(state.length + 1)
         : stringClass;
+
     return {
         cleanedClass,
         state,
@@ -120,8 +110,8 @@ const getPrefixInfos = (
     stringClass: string
 ): { cleanedColor: string; prefix: string } => {
     const prefixes = [
-        ...config.presets?.map(q => q.prefix),
-        ...config.qol?.map(q => q.prefix),
+        ...config.presets.map(q => q.prefix),
+        ...config.qol.map(q => q.prefix),
     ];
 
     for (const prefix of prefixes) {
@@ -130,12 +120,12 @@ const getPrefixInfos = (
         }
 
         return {
-            cleanedColor: stringClass?.slice(prefix.length + 1),
+            cleanedColor: stringClass.slice(prefix.length + 1),
             prefix,
         };
     }
 
-    console.log({ prefixes, stringClass });
+    log(`No matching prefix found for class: ${stringClass}`);
     return { cleanedColor: stringClass, prefix: null };
 };
 
@@ -147,33 +137,41 @@ const getPresetInfos = ({
     prefix?: string;
 }) => {
     /**
-     * _ Find preset variants matching the prefix from the config
-     * _ Since a prefix can be in multiple presets and qol, filter every matching prefixes then flatten everything
+     * Find preset variants matching the prefix from the config
+     * Since a prefix can be in multiple presets and qol, filter every matching prefixes
      * TODO fix first default occurence getting picked when duplicate
-     *  */
-    const possiblePresets = [...config.presets, ...config.qol]
-        ?.filter(p => p.prefix === prefix)
-        ?.flat();
-    if (!possiblePresets?.length) {
+     */
+    const possiblePresets = [...config.presets, ...config.qol].filter(
+        p => p.prefix === prefix
+    );
+
+    if (!possiblePresets.length) {
         return { matchingPreset: null, variation: null };
     }
 
     const { colorExists } = getColorInfos(cleanedColor);
 
     /**
-     * Find the preset where the variations exists
-     * If the color exists, it is a preset, so use the preset
-     * */
-    const matchingPreset =
-        colorExists || !cleanedColor
-            ? possiblePresets[0]
-            : possiblePresets?.find(
-                  ({ variations }) =>
-                      !variations ||
-                      Object.keys(variations)?.find(
-                          v => cleanedColor === v || cleanedColor.endsWith(v)
-                      )
-              );
+     * Find the preset where the variations exist
+     * Logic:
+     * 1. If we have a valid color or no color specified, use the first preset
+     * 2. Otherwise, find a preset with a matching variation
+     */
+    let matchingPreset;
+
+    if (colorExists || !cleanedColor) {
+        // Valid color exists or no color specified - use first preset
+        matchingPreset = possiblePresets[0];
+    } else {
+        // Find preset with matching variation
+        matchingPreset = possiblePresets.find(({ variations }) => {
+            if (!variations) return true;
+
+            return Object.keys(variations).some(
+                v => cleanedColor === v || cleanedColor.endsWith(v)
+            );
+        });
+    }
 
     if (!matchingPreset) {
         log(`No preset found for ${cleanedColor || prefix}`);
@@ -184,7 +182,7 @@ const getPresetInfos = ({
         };
     }
 
-    if (!colorExists && !matchingPreset?.variations) {
+    if (!colorExists && !matchingPreset.variations) {
         log(`Unknow stuff -> ${prefix} ${cleanedColor}}`);
 
         return {
@@ -196,14 +194,15 @@ const getPresetInfos = ({
     const possibleVariations = matchingPreset.variations || { default: '' };
 
     const defaultVariation = 'default';
-    /** What is happening here:
-     * xl variation can be matched when looking for 2xl, check for exact first
-     * i don't remember why but we need the endsWith in some edge cases
+    /**
+     * Variation matching logic:
+     * 1. Check for exact match first (prevents "xl" matching when looking for "2xl")
+     * 2. Fall back to endsWith for edge cases where variation is a suffix
      */
-    const exactVariation = Object.keys(possibleVariations)?.find(
+    const exactVariation = Object.keys(possibleVariations).find(
         v => cleanedColor === v
     );
-    const closestVariation = Object.keys(possibleVariations)?.find(v =>
+    const closestVariation = Object.keys(possibleVariations).find(v =>
         cleanedColor.endsWith(v)
     );
 
@@ -211,7 +210,7 @@ const getPresetInfos = ({
 
     const variation = possibleVariations[matchingVariation || defaultVariation];
     const baseColor = matchingVariation
-        ? cleanedColor?.slice(0, -matchingVariation?.length - 1)
+        ? cleanedColor.slice(0, -matchingVariation.length - 1)
         : cleanedColor;
 
     return {
@@ -222,6 +221,12 @@ const getPresetInfos = ({
     };
 };
 
+// Map state names to CSS pseudo-selectors
+const STATE_SELECTORS: Record<string, string> = {
+    'hover': ':hover',
+    'not-hover': ':not(:hover)',
+};
+
 const buildRuleInfo = ({
     state,
     prefix,
@@ -230,17 +235,8 @@ const buildRuleInfo = ({
     variation,
     variationName,
 }): RuleInfo | null => {
-    // _ Set state selector
-    let stateSelector = '';
-    switch (state) {
-        case 'hover':
-            stateSelector = ':hover';
-            break;
-
-        case 'not-hover':
-            stateSelector = ':not(:hover)';
-            break;
-    }
+    // Get state selector from mapping
+    const stateSelector = state ? STATE_SELECTORS[state] || '' : '';
 
     let selector = `${prefix}${color ? `-${color}` : ''}${
         variationName ? `-${variationName}` : ''
@@ -251,54 +247,65 @@ const buildRuleInfo = ({
     }
 
     // Vérifier que la couleur existe dans la config
-    if (color && !config.colors?.[color]) {
+    if (color && !config.colors[color]) {
         log(
             `Color '${color}' not found in colors config - skipping rule generation`
         );
         return null;
     }
 
-    // Gérer les variants avec variables SCSS
+    // Gérer les variants avec variables CSS ou valeurs directes
     let variableToUse = variation;
     let variantInfo = undefined;
 
-    // Vérifier si on doit exporter ce variant
-    const shouldExport =
-        preset?.['export-variations'] === true ||
-        preset?.['export-variations'] === 'always';
+    // Vérifier si on doit exporter les variants en tant que variables CSS
+    const exportVariations = preset['export-variations'];
+    const useVariables = exportVariations === true;
 
     if (variationName && variationName !== 'default') {
         const variablePrefix = prefix;
         const variableName = `${variablePrefix}-${variationName}`;
-        variableToUse = `$${variableName}`;
-        variantInfo = {
-            prefix,
-            variantName: variationName,
-            variantValue: variation,
-            shouldExport,
-        };
+
+        // Si export-variations: true, utiliser une variable CSS, sinon la valeur directe
+        if (useVariables) {
+            variableToUse = `var(--${variableName})`;
+            variantInfo = {
+                prefix,
+                variantName: variationName,
+                variantValue: variation,
+                shouldExport: true,
+            };
+        } else {
+            // Utiliser la valeur directe, pas de variable CSS
+            variableToUse = variation;
+        }
     } else if (variation && variationName === 'default') {
-        // Pour les variants par défaut, on utilise juste le prefix
+        // Pour les variants par défaut
         const variableName = `${prefix}-default`;
-        variableToUse = `$${variableName}`;
-        variantInfo = {
-            prefix,
-            variantName: 'default',
-            variantValue: variation,
-            shouldExport,
-        };
+
+        if (useVariables) {
+            variableToUse = `var(--${variableName})`;
+            variantInfo = {
+                prefix,
+                variantName: 'default',
+                variantValue: variation,
+                shouldExport: true,
+            };
+        } else {
+            variableToUse = variation;
+        }
     }
 
     let declaration = preset.declaration
-        ?.replace('${value}', variableToUse)
-        ?.replace('${color}', color ? `$${color}` : '');
+        .replace('${value}', variableToUse)
+        .replace('${color}', color ? `var(--${color})` : '');
 
     if (!declaration.endsWith(';')) {
         declaration += ';';
     }
 
     if (!declaration.includes('!important')) {
-        declaration = declaration?.replace(';', ' !important;');
+        declaration = declaration.replace(';', ' !important;');
     }
 
     return {
@@ -313,12 +320,15 @@ const buildRuleInfo = ({
  * _ Check if a color includes opacity (ends with 2 digits)
  * * Opacity is included in the color name during mixin declaration
  * */
-const getColorInfos = (color: string) => {
-    const opacityDetectionRegex = new RegExp(/(?:(\w-?)+)-\d{2}$/, 'gm'); // Strings that end with two digits
-    const isOpacity = opacityDetectionRegex.test(color);
+// Cache regex outside function to avoid recompilation on every call
+const OPACITY_DETECTION_REGEX = /(?:(\w-?)+)-\d{2}$/; // Strings that end with two digits (e.g., primary-50)
+const OPACITY_SUFFIX_LENGTH = 3; // Length of "-NN" format
 
-    const baseColor = isOpacity ? color?.slice(0, -3) : color;
-    const colorExists = Object.keys(config.colors)?.some(
+const getColorInfos = (color: string) => {
+    const isOpacity = OPACITY_DETECTION_REGEX.test(color);
+
+    const baseColor = isOpacity ? color.slice(0, -OPACITY_SUFFIX_LENGTH) : color;
+    const colorExists = Object.keys(config.colors).some(
         configColor => configColor === baseColor
     );
 
@@ -329,4 +339,4 @@ const getColorInfos = (color: string) => {
     };
 };
 
-export { mapClassesIntoRules, mapClassIntoRule };
+export { mapClassesIntoRules };

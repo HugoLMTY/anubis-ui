@@ -1,9 +1,8 @@
 import { IEnvConfig } from "../interfaces/config.interface";
 import { readUserConfigFile, checkUserConfigFile, userConfig } from "./fileStuff/config.file"
 import { log } from "./logger"
-
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
+import path from 'path'
 
 const anubisConfigFolder = path.join(__dirname, '..', '..', 'src', 'config');
 const anubisConfigFiles = [

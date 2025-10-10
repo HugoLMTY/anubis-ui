@@ -1,6 +1,5 @@
-const fs = require('fs')
-const path = require('path')
-
+import fs from 'fs'
+import path from 'path'
 import { log } from '../logger'
 
 const userConfigPath = path.join(process.cwd(), 'anubis.config.json')
@@ -21,7 +20,7 @@ const readUserConfigFile = () => {
 }
 
 /** Print a warning if the config file has unknow keys */
-const checkUserConfigFile = (configFile) => {
+const checkUserConfigFile = (configFile: string[]): void => {
   if (!userConfig) { return }
 
   // todo - also check values

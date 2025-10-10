@@ -1,5 +1,4 @@
-const fg = require('fast-glob')
-
+import fg from 'fast-glob'
 import { IFileConfig } from '../../interfaces/files.interface'
 
 const getFiles = async (routeConfig: IFileConfig) => {

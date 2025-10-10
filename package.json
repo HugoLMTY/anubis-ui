@@ -37,7 +37,6 @@
     "vite": "^6.3.2"
   },
   "dependencies": {
-    "fast-glob": "^3.3.3",
-    "fs": "^0.0.1-security"
+    "fast-glob": "^3.3.3"
   }
 }
