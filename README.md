@@ -17,8 +17,9 @@ AnubisUI (Autonomous Nominative Utility Based Intuitive Styler) is a Vite plugin
 4. [Available Utility Classes](#available-utility-classes)
 5. [Prefix/Declaration relations](#prefixdeclaration-relations)
 6. [Architecture](#architecture)
-7. [Credits](#credits)
-8. [Licence](#licence)
+7. [Development](#development)
+8. [Credits](#credits)
+9. [Licence](#licence)
 
 ## Features
 - 🎨 Dynamic CSS generation based on utility classes
@@ -150,13 +151,46 @@ Copy-paste is recommanded
 
 ---
 ### Colors (`colors.config.json`)
-Define your color palette with light/dark theme support. Each color requires `light` and `dark` values.
+Define your color palette with light/dark theme support. Colors can be defined in three different ways:
 
 **[View default colors config →](./src/config/colors.config.json)**
+
+**Color generation modes**:
+1. **Both themes** - Define both `light` and `dark` values:
+   ```json
+   "primary": {
+     "light": "#0f84cb",
+     "dark": "#1a94db"
+   }
+   ```
+   Generates color variables for both light and dark themes with opacity variations.
+
+2. **Light theme only** - Define only `light` value:
+   ```json
+   "custom-light": {
+     "light": "#ff00ff"
+   }
+   ```
+   Generates color variables only for light theme. Dark theme will not have this color defined.
+
+3. **Dark theme only** - Define only `dark` value:
+   ```json
+   "custom-dark": {
+     "dark": "#00ffff"
+   }
+   ```
+   Generates color variables only for dark theme. Light theme will not have this color defined.
 
 Full palette includes: `primary`, `secondary`, `accent`, `neutral`, `success`, `warning`, `danger` with levels: `lowest`, `lower`, `low`, `medium`, `high`, `higher`, `highest`.
 
 **Color naming convention**: Colors are automatically converted to CSS variables as `--{color-name}`. Use semantic color levels to ensure proper theme adaptation.
+
+**Opacity variations**: For non-transparent colors, AnubisUI automatically generates opacity variants (10 to 90) accessible via `--{color-name}-{opacity}` (e.g., `--primary-50` for 50% opacity).
+
+**Color validation**: AnubisUI automatically validates your color configuration on build:
+- Each color must have at least one theme defined (`light` or `dark`)
+- Color values must be valid hex format (`#RRGGBB` or `#RGB`) or `transparent`
+- Invalid configurations will throw an error with detailed messages
 
 ---
 ### Files (`files.config.json`)
@@ -426,6 +460,29 @@ The plugin (`index.js`) provides:
 
 **Caching**: Regex patterns are cached based on config hash to avoid recompilation on every file scan.
 
+## Development
+
+### Running Tests
+
+AnubisUI uses [Vitest](https://vitest.dev/) for testing:
+
+```bash
+# Run tests in watch mode (recommended for development)
+npm test
+
+# Run tests once (CI/production)
+npm run test:run
+
+# Run tests with UI
+npm run test:ui
+```
+
+### Test Coverage
+
+- **Color Validation** - Tests for configuration validation logic
+- Located in `tests/validation/`
+
+See [tests/README.md](./tests/README.md) for more information.
 
 ## Credits
 

@@ -1,5 +1,5 @@
-import { config } from '../config.tool';
-import { log } from '../logger';
+import { config } from '@tools/config.tool';
+import { log } from '@tools/logger';
 
 const mapClassesIntoRules = (classes: string[]) => {
     const usedVariants = new Map<string, string>();
@@ -223,7 +223,7 @@ const getPresetInfos = ({
 
 // Map state names to CSS pseudo-selectors
 const STATE_SELECTORS: Record<string, string> = {
-    'hover': ':hover',
+    hover: ':hover',
     'not-hover': ':not(:hover)',
 };
 
@@ -327,7 +327,9 @@ const OPACITY_SUFFIX_LENGTH = 3; // Length of "-NN" format
 const getColorInfos = (color: string) => {
     const isOpacity = OPACITY_DETECTION_REGEX.test(color);
 
-    const baseColor = isOpacity ? color.slice(0, -OPACITY_SUFFIX_LENGTH) : color;
+    const baseColor = isOpacity
+        ? color.slice(0, -OPACITY_SUFFIX_LENGTH)
+        : color;
     const colorExists = Object.keys(config.colors).some(
         configColor => configColor === baseColor
     );

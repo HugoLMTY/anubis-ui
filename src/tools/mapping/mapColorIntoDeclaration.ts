@@ -1,14 +1,14 @@
-import { IColor } from "../../interfaces/color.interface"
-import { defineColor } from "../output/css.output"
+import { IColor } from '@interfaces/color.interface';
+import { defineColor } from '@tools/output/css.output';
 
 const mapColorsIntoMixinDeclaration = (colors: IColor) => {
-  const mappedColors = Object.entries(colors)
-    ?.map(([colorName, { light, dark }]) => defineColor(colorName, light, dark))
-    ?.join('\n')
+    const mappedColors = Object.entries(colors)
+        ?.map(([colorName, { light, dark }]) =>
+            defineColor(colorName, light, dark)
+        )
+        ?.join('\n');
 
-  return mappedColors
-}
+    return mappedColors;
+};
 
-export {
-  mapColorsIntoMixinDeclaration
-}
+export { mapColorsIntoMixinDeclaration };

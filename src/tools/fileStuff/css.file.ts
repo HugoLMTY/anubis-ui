@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
-import { log } from '../logger';
-import { getHeader } from '../output/css.output';
+import { log } from '@tools/logger';
+import { getHeader } from '@tools/output/css.output';
 
 const srcDir = path.join(process.cwd(), 'src', 'css');
 const outputPath = path.join(srcDir, '_anubis.scss');
@@ -24,7 +24,11 @@ const checkCssRuleFilePresence = () => {
     }
 };
 
-const writeCssRuleFile = (colors: string = '', variants: string = '', classes: string = '') => {
+const writeCssRuleFile = (
+    colors: string = '',
+    variants: string = '',
+    classes: string = ''
+) => {
     try {
         checkCssRuleFilePresence();
 

@@ -1,8 +1,8 @@
-import { getFiles } from '../fileStuff/file.tools';
-import { mapClassesIntoRules } from '../mapping/mapClassIntoRule';
-import { writeCssRuleFile } from '../fileStuff/css.file';
-import { config } from '../config.tool';
-import { mapColorsIntoMixinDeclaration } from '../mapping/mapColorIntoDeclaration';
+import { getFiles } from '@tools/fileStuff/file.tools';
+import { mapClassesIntoRules } from '@tools/mapping/mapClassIntoRule';
+import { writeCssRuleFile } from '@tools/fileStuff/css.file';
+import { config } from '@tools/config.tool';
+import { mapColorsIntoMixinDeclaration } from '@tools/mapping/mapColorIntoDeclaration';
 
 import fs from 'fs';
 
@@ -63,7 +63,9 @@ const init = async () => {
  * It allows you to write custom css/scss classes in your web
  * components.
  */`;
-    const mappedColors = `${colorComment}\n${mapColorsIntoMixinDeclaration(config.colors)}`;
+    const mappedColors = `${colorComment}\n${mapColorsIntoMixinDeclaration(
+        config.colors
+    )}`;
 
     // Get all variants that should be exported (export-variations: true)
     const allExportVariants = getAllExportVariants();
@@ -120,7 +122,6 @@ const getUniqueClasses = async (files: string[]): Promise<string[]> => {
     return uniqueClasses;
 };
 
-
 /** Build regex pattern from config */
 const buildClassDetectionRegex = (): RegExp => {
     const { states, qol, presets } = config;
@@ -164,8 +165,6 @@ const extractClasses = async (filePath: string): Promise<string[]> => {
     const matches = file.match(classDetectionRegex) || [];
     return matches;
 };
-
-
 
 /** Get all variants from presets with export-variations: true */
 const getAllExportVariants = (): Record<string, string> => {

@@ -1,8 +1,9 @@
-import { IEnvConfig } from "../interfaces/config.interface";
-import { readUserConfigFile, checkUserConfigFile, userConfig } from "./fileStuff/config.file"
-import { log } from "./logger"
-import fs from 'fs'
-import path from 'path'
+import { IEnvConfig } from '@interfaces/config.interface';
+import { readUserConfigFile, checkUserConfigFile, userConfig } from '@tools/fileStuff/config.file';
+import { log } from '@tools/logger';
+import { validateColors } from '@validation/color.validation';
+import fs from 'fs';
+import path from 'path';
 
 const anubisConfigFolder = path.join(__dirname, '..', '..', 'src', 'config');
 const anubisConfigFiles = [
@@ -51,6 +52,9 @@ const init = () => {
     log(`Forcing the creation of ${forceClasses?.length} classes`)
     config.force = userConfig['force']
   }
+
+  // Validate colors configuration
+  validateColors(config.colors)
 
   return config
 }
