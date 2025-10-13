@@ -1,3 +1,4 @@
+import { IRuleInfo } from '@/interfaces/preset.interface';
 import { config } from '@tools/config.tool';
 import { log } from '@tools/logger';
 
@@ -26,25 +27,13 @@ const mapClassesIntoRules = (classes: string[]) => {
     };
 };
 
-const generateCssRules = (ruleInfos: RuleInfo[]): string => {
+const generateCssRules = (ruleInfos: IRuleInfo[]): string => {
     return ruleInfos
         .map(ruleInfo => `.${ruleInfo.selector} { ${ruleInfo.declaration} }`)
         .join('\n');
 };
 
-interface RuleInfo {
-    selector: string;
-    declaration: string;
-    color?: string;
-    variant?: {
-        prefix: string;
-        variantName: string;
-        variantValue: string;
-        shouldExport: boolean;
-    };
-}
-
-const mapClassIntoRule = (stringClass: string): RuleInfo | null => {
+const mapClassIntoRule = (stringClass: string): IRuleInfo | null => {
     const params = getClassInfos(stringClass);
 
     /**
@@ -234,7 +223,7 @@ const buildRuleInfo = ({
     preset,
     variation,
     variationName,
-}): RuleInfo | null => {
+}): IRuleInfo | null => {
     // Get state selector from mapping
     const stateSelector = state ? STATE_SELECTORS[state] || '' : '';
 

@@ -21,3 +21,15 @@ export interface IPreset {
     /** List of every possible variations */
     variations: IVariation;
 }
+
+export interface IRuleInfo {
+    selector: string;
+    declaration: string;
+    color?: string;
+    variant?: {
+        prefix: string;
+        variantName: string;
+        variantValue: string;
+        shouldExport: boolean;
+    };
+}
