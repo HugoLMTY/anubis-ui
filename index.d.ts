@@ -1,6 +1,6 @@
 declare module 'anubis-ui' {
     import type { Plugin } from 'vite';
-    import type { IEnvConfig } from './src/interfaces/config.interface';
+    import type { IEnvConfig } from './dist/interfaces/config.interface';
 
     const plugin: Plugin;
     const config: IEnvConfig;
