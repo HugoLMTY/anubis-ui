@@ -1,39 +1,37 @@
 "use strict";
 
-const { init: initConfig, config } = require('./dist/tools/config.tool');
-const { log, logPrefix, logo } = require('./dist/tools/logger');
-const { init: initClassExtraction } = require('./dist/tools/extraction/extractClasses');
+const { init, refresh } = require('./dist/index');
+const { log, logPrefix } = require('./dist/shared/utils/logger');
 
-const init = async () => {
-  logo();
-
-  console.time(`${logPrefix} Config initialized in`);
-  initConfig();
-  console.timeEnd(`${logPrefix} Config initialized in`);
-  log('---');
-
-  console.time(`${logPrefix} Rules generated in`);
-  await initClassExtraction();
-  console.timeEnd(`${logPrefix} Rules generated in`);
-  log('---');
+const initAnubis = async () => {
+  try {
+    await init();
+  } catch (error) {
+    console.error(`${logPrefix} ❌ Initialization failed:`, error.message);
+    throw error;
+  }
 };
 
-const refresh = async (file) => {
-  // console.log({ file });
-
-  // _ Prevent self change loop
-  // todo - add targets / ignore detection
-  if (file.endsWith('_anubis.scss')) { return }
-  if (file.endsWith('anubis.config.json')) {
-    log('Config file changed, restarting...')
-    init();
-    return
+const refreshAnubis = async (file) => {
+  // Prevent self change loop
+  if (file.endsWith('_anubis.scss')) {
+    return;
   }
 
-  console.time(`${logPrefix} Refreshed in`);
-  await initClassExtraction();
-  console.timeEnd(`${logPrefix} Refreshed in`);
-}
+  // If config changed, reinitialize
+  if (file.endsWith('anubis.config.json')) {
+    log('Config file changed, reinitializing...');
+    await initAnubis();
+    return;
+  }
+
+  // Otherwise just refresh
+  try {
+    await refresh();
+  } catch (error) {
+    console.error(`${logPrefix} ❌ Refresh failed:`, error.message);
+  }
+};
 
 function AnubisUI() {
   return {
@@ -41,17 +39,17 @@ function AnubisUI() {
     configureServer(server) {
       server.watcher.on('change', async (file) => {
         if (typeof process !== 'undefined' && process.versions && process.versions.node) {
-          await refresh(file)
+          await refreshAnubis(file);
         } else {
-          log('Trying to build in a not Node environment, aborting')
+          log('Trying to build in a not Node environment, aborting');
         }
       });
     },
     async buildStart() {
       if (typeof process !== 'undefined' && process.versions && process.versions.node) {
-        await init();
+        await initAnubis();
       } else {
-        log('Trying to build in a not Node environment, aborting')
+        log('Trying to build in a not Node environment, aborting');
       }
     }
   };
@@ -59,5 +57,4 @@ function AnubisUI() {
 
 module.exports = {
   plugin: AnubisUI(),
-  config
-}
+};

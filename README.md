@@ -25,7 +25,9 @@ AnubisUI (Autonomous Nominative Utility Based Intuitive Styler) is a Vite plugin
 - 🎨 Dynamic CSS generation based on utility classes
 - 🔄 Hot-reloading support through Vite plugin
 - 🌓 Built-in light/dark theme color system
-- 🛠️ Customizable presets for:
+- 🧩 **NEW in V2**: Unified utilities system (simplified configuration)
+- 🏗️ **NEW in V2**: Clean DDD architecture with better testability
+- 🛠️ Customizable utilities for:
   - Background & text colors
   - Border widths and styles
   - Inner borders (inset shadows)
@@ -34,10 +36,12 @@ AnubisUI (Autonomous Nominative Utility Based Intuitive Styler) is a Vite plugin
   - Transitions
   - Typography (size, weight)
   - Positioning & blur effects
-- 🎯 State modifiers (hover, not-hover)
+- 🎯 State modifiers (hover, focus, active, not-hover)
 - 🔍 Smart class detection and parsing
 - 📦 CSS variable generation for reusable values
 - ⚙️ Export variations as CSS variables for custom styling
+- ✅ **NEW in V2**: Comprehensive validation with detailed error messages
+- 🧪 **NEW in V2**: 97 tests with integration testing
 
 # Installation
 
@@ -102,52 +106,50 @@ For every config you want to change, add the corresponding section in your confi
 {
   // files.config.json
   "files": {
-    "targets": ["/.vue"],
-    "ignore": []
+    "include": ["**/*.html", "**/*.vue"],
+    "exclude": ["node_modules/**", "dist/**"]
   },
 
   // colors.config.json
-  "colors": ["primary", "secondary"],
+  "colors": {
+    "primary": { "light": "#0f84cb", "dark": "#1a94db" },
+    "secondary": { "light": "#3b5161" }
+  },
 
   // states.config.json
-  "states": ["hover"],
+  "states": ["hover", "focus", "active"],
 
-  // qol.config.json
-  "qol": [
+  // utilities.config.json (NEW in V2 - replaces presets + qol)
+  "utilities": [
     {
       "prefix": "bg",
       "declaration": "background: ${color}"
-    }
-  ],
-
-  // presets.config.json
-  "presets": [
+    },
+    {
+      "prefix": "rounded",
+      "declaration": "border-radius: ${variant}",
+      "variants": { "md": "8px", "lg": "12px" },
+      "default-variant": "md"
+    },
     {
       "prefix": "border",
-      "declaration": "border-width: ${value} !important; border-color: ${color} !important; border-style: solid;",
-      "variations": {
-        "default": "4px",
-        "thin": "2px"
-      }
+      "declaration": "border-width: ${variant}; border-color: ${color}",
+      "variants": { "thin": "1px", "thick": "4px" }
     }
   ],
 
-  // force.config.json
-  "force": [
-    "bg-primary-10",
-    "bg-primary-20",
-    "bg-primary-30"
+  // forcedClasses (optional)
+  "forcedClasses": [
+    "bg-primary-50",
+    "text-white"
   ]
 }
 ```
 <sup>anubis.config.json (example)</sup>
 
-Only the sections you want to override need to be included - other sections will use default values. Not every
-> Presets is still unstable, use at your own risks
-<br />
-You __MUST__ use the exact same [presets](#presets-presetsconfigjson) names syntax to keep it working, but variations key/values can change.
-<br />
-Copy-paste is recommanded
+> **V2 Update**: `presets` and `qol` have been unified into a single `utilities` configuration. The system automatically detects the utility type based on placeholders (`${color}`, `${variant}`) in the declaration.
+
+Only the sections you want to override need to be included - other sections will use default values.
 
 ---
 ### Colors (`colors.config.json`)

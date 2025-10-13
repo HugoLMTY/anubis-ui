@@ -1,5 +1,10 @@
 {
-  "targets": [
+  "include": [
+    "**/*.html",
     "**/*.vue"
+  ],
+  "exclude": [
+    "node_modules/**",
+    "dist/**"
   ]
 }

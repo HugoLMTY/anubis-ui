@@ -5,10 +5,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@config': path.resolve(__dirname, './src/config'),
-      '@interfaces': path.resolve(__dirname, './src/interfaces'),
-      '@tools': path.resolve(__dirname, './src/tools'),
-      '@validation': path.resolve(__dirname, './src/tools/validation'),
+      '@shared': path.resolve(__dirname, './src/shared'),
+      '@domain': path.resolve(__dirname, './src/domain'),
+      '@core': path.resolve(__dirname, './src/core'),
+      '@infrastructure': path.resolve(__dirname, './src/infrastructure'),
     },
   },
   test: {

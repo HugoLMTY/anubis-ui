@@ -11,10 +11,10 @@
     "baseUrl": "./src",
     "paths": {
       "@/*": ["./*"],
-      "@config/*": ["./config/*"],
-      "@interfaces/*": ["./interfaces/*"],
-      "@tools/*": ["./tools/*"],
-      "@validation/*": ["./tools/validation/*"]
+      "@shared/*": ["./shared/*"],
+      "@domain/*": ["./domain/*"],
+      "@core/*": ["./core/*"],
+      "@infrastructure/*": ["./infrastructure/*"]
     }
   },
   "include": ["src/**/*", "package.json"],

@@ -1,6 +1,6 @@
 {
   "name": "anubis-ui",
-  "version": "1.2.15",
+  "version": "2.0.0",
   "description": "Class-based css generator",
   "main": "index.js",
   "keywords": [
@@ -15,7 +15,7 @@
     "vue"
   ],
   "scripts": {
-    "dev": "rm -rf dist; npm run prepare; node src/manual/build.js",
+    "dev": "rm -rf dist; npm run prepare; node src/manual/build-v2.js",
     "build": "tsc && tsc-alias",
     "preinstall": "npm run build",
     "prepare": "npm run build",
@@ -42,6 +42,7 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "fast-glob": "^3.3.3"
+    "fast-glob": "^3.3.3",
+    "glob": "^11.0.3"
   }
 }
