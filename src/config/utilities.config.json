@@ -1,0 +1,144 @@
+[
+  {
+    "prefix": "bg",
+    "declaration": "background: ${color}"
+  },
+  {
+    "prefix": "text",
+    "declaration": "color: ${color}"
+  },
+  {
+    "prefix": "border",
+    "declaration": "border-width: ${variant} !important; border-color: ${color} !important; border-style: solid;",
+    "variants": {
+      "default": "4px",
+      "thinest": "1px",
+      "thiner": "2px",
+      "thin": "3px",
+      "thick": "6px",
+      "thicker": "8px",
+      "thickest": "10px",
+      "node": "0.2rem"
+    }
+  },
+  {
+    "prefix": "inner-border",
+    "declaration": "box-shadow: inset 0px 0px 0px ${variant} ${color}",
+    "variants": {
+      "default": "4px",
+      "thinest": "1px",
+      "thiner": "2px",
+      "thin2": "3px",
+      "thick": "6px",
+      "thicker": "8px",
+      "thickest": "10px",
+      "node": "0.2rem"
+    }
+  },
+  {
+    "prefix": "shadow",
+    "declaration": "box-shadow: ${variant} ${color}",
+    "variants": {
+      "default": "0px 0px 7px 1px",
+      "densest": "0px 0px 3px 1px",
+      "lower": "0px 0px 5px 1px",
+      "dense": "0px 0px 5px 1px",
+      "wide": "0px 0px 10px 1px",
+      "wider": "0px 0px 15px 1px",
+      "widest": "0px 0px 20px 1px"
+    }
+  },
+  {
+    "prefix": "blur",
+    "declaration": "backdrop-filter: blur(${variant})",
+    "variants": {
+      "default": "3px"
+    },
+    "default-variant": "default"
+  },
+  {
+    "prefix": "smooth",
+    "declaration": "transition-duration: ${variant}",
+    "variants": {
+      "default": "0.1s",
+      "slowest": "0.5s",
+      "slower": "0.3s",
+      "slow": "0.2s",
+      "quick": "0.07s",
+      "quicker": "0.05s",
+      "quickest": "0.03s"
+    },
+    "default-variant": "default"
+  },
+  {
+    "prefix": "rounded",
+    "declaration": "border-radius: ${variant}",
+    "variants": {
+      "default": "8px",
+      "square": "0px",
+      "xs": "2px",
+      "sm": "4px",
+      "md": "8px",
+      "lg": "12px",
+      "xl": "16px",
+      "very": "9999px",
+      "full": "50%",
+      "half": "100%"
+    },
+    "default-variant": "default"
+  },
+  {
+    "prefix": "border-style",
+    "declaration": "border-style: ${variant}",
+    "variants": {
+      "solid": "solid",
+      "dashed": "dashed",
+      "dotted": "dotted"
+    }
+  },
+  {
+    "prefix": "position",
+    "declaration": "position: ${variant}",
+    "variants": {
+      "relative": "relative",
+      "absolute": "absolute"
+    }
+  },
+  {
+    "prefix": "size",
+    "declaration": "font-size: ${variant} !important",
+    "export-variants": true,
+    "variants": {
+      "2xs": "10px",
+      "xs": "12px",
+      "sm": "14px",
+      "md": "16px",
+      "lg": "18px",
+      "xl": "20px",
+      "2xl": "24px",
+      "3xl": "30px",
+      "4xl": "36px",
+      "5xl": "48px",
+      "6xl": "60px",
+      "7xl": "72px",
+      "8xl": "96px",
+      "9xl": "128px"
+    }
+  },
+  {
+    "prefix": "weight",
+    "declaration": "font-weight: ${variant} !important",
+    "export-variants": true,
+    "variants": {
+      "thin": "100",
+      "extra-light": "200",
+      "light": "300",
+      "normal": "400",
+      "medium": "500",
+      "semi-bold": "600",
+      "bold": "700",
+      "extra-bold": "800",
+      "black": "900"
+    }
+  }
+]
