@@ -16,9 +16,12 @@
   ],
   "scripts": {
     "dev": "rm -rf dist; npm run prepare; node src/manual/build.js",
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "preinstall": "npm run build",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:ui": "vitest --ui"
   },
   "style": "dist/_anubis.scss",
   "repository": {
@@ -33,11 +36,12 @@
   "homepage": "https://github.com/HugoLMTY/anubis-ui#readme",
   "devDependencies": {
     "@types/node": "^22.14.1",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.8.3",
-    "vite": "^6.3.2"
+    "vite": "^6.3.2",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
-    "fast-glob": "^3.3.3",
-    "fs": "^0.0.1-security"
+    "fast-glob": "^3.3.3"
   }
 }
