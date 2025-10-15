@@ -36,12 +36,12 @@
   "homepage": "https://github.com/HugoLMTY/anubis-ui#readme",
   "devDependencies": {
     "@types/node": "^22.14.1",
-    "typescript": "^5.8.3",
     "vite": "^6.3.2",
     "vitest": "^3.2.4"
   },
   "dependencies": {
     "fast-glob": "^3.3.3",
+    "typescript": "^5.8.3",
     "tsc-alias": "^1.8.16"
   }
 }
