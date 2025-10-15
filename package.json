@@ -42,7 +42,6 @@
   },
   "dependencies": {
     "fast-glob": "^3.3.3",
-    "tsc": "^2.0.4",
     "tsc-alias": "^1.8.16"
   }
 }
