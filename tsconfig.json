@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "./dist",
+    "rootDir": "./src",
     "declaration": true,
     "module": "commonjs",
     "target": "es2019",
@@ -16,6 +17,6 @@
       "@validation/*": ["./tools/validation/*"]
     }
   },
-  "include": ["src/**/*", "package.json"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

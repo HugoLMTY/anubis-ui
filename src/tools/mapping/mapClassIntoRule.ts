@@ -165,7 +165,7 @@ const getUtilityInfos = ({
 	}
 
 	if (!matchingUtility) {
-		log(`No utility found for ${cleanedColor || prefix}`);
+		// log(`No utility found for ${cleanedColor || prefix}`);
 
 		return {
 			matchingUtility,
@@ -174,7 +174,7 @@ const getUtilityInfos = ({
 	}
 
 	if (!colorExists && !matchingUtility.variations) {
-		log(`Unknow stuff -> ${[prefix, cleanedColor].join('-')}`);
+		// log(`Unknow stuff -> ${[prefix, cleanedColor].join('-')}`);
 
 		return {
 			matchingUtility,
@@ -328,7 +328,6 @@ const getColorInfos = (color: string) => {
 	const colorExists = Object.keys(config.colors).some(
 		configColor => configColor === baseColor
 	);
-	color === 'primary-10' && console.log({ colorExists, baseColor })
 
 	return {
 		colorExists,

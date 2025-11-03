@@ -1,5 +1,4 @@
-import packageJson from '../../../package.json';
-const { version } = packageJson;
+import { version } from '../../version';
 
 const header = `/**
  * Anubis v.${version}

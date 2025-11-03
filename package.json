@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "dev": "rm -rf dist; npm run prepare; node src/manual/build.js",
-    "build": "tsc && tsc-alias",
+    "build": "node scripts/generate-version.js && tsc && tsc-alias",
     "preinstall": "npm run build",
     "prepare": "npm run build",
     "test": "vitest",

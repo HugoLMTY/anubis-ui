@@ -5,3 +5,4 @@ template
 
 src/css
 anubis.config.json
+version.ts
