@@ -8,6 +8,15 @@
     "declaration": "color: ${color}"
   },
   {
+    "prefix": "text",
+    "declaration": "text-decoration: ${value}",
+    "variations": {
+      "underline": "underline",
+      "dashed": "dashed",
+      "dotted": "dotted"
+    }
+  },
+  {
     "prefix": "border",
     "declaration": "border-width: ${value} !important; border-color: ${color} !important; border-style: solid;",
     "variations": {

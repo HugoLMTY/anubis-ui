@@ -132,21 +132,25 @@ const getUtilityInfos = ({
 	}
 
 	const { colorExists } = getColorInfos(cleanedColor);
+	const possibleUtilityVariations = possibleUtility.filter(({ variations }) => Object.keys(variations || {})?.length)
 
 	/**
 	 * Find the utility where the variations exist
 	 * Logic:
-	 * 1. If we have a valid color or no color specified, use the first utility
+	 * 1. If
+	 * 		OR we have a valid color
+	 * 		OR no color specified
+	 * 		OR no possible utilities have variation
+	 *   Then use the first utility
 	 * 2. Otherwise, find a utility with a matching variation
 	 */
 	let matchingUtility;
 
-	if (colorExists || !cleanedColor) {
-		// Valid color exists or no color specified - use first utility
+	if (colorExists || !cleanedColor || possibleUtilityVariations?.length <= 0) {
 		matchingUtility = possibleUtility[0];
 	} else {
 		// Find utility with matching variation
-		matchingUtility = possibleUtility.find(({ variations }) => {
+		matchingUtility = possibleUtilityVariations.find(({ variations }) => {
 			if (!variations) return true;
 
 			const mappedVariations = Array.isArray(variations) ? variations : Object.keys(variations)
