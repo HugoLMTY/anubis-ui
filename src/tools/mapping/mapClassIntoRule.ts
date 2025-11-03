@@ -35,25 +35,18 @@ const generateCssRules = (ruleInfos: IRuleInfo[]): string => {
 
 const mapClassIntoRule = (stringClass: string): IRuleInfo | null => {
 	const params = getClassInfos(stringClass);
+	if (!params.utility) { return null }
+
+	const needsColor = params.utility?.declaration?.includes('${color}')
+	const usesVariation = params.variationName
+	const hasDefaultVariation = Object.keys(params.utility?.variations || []).includes('default')
 
 	/**
-	 * _ If no variations are found, maybe it's just a color like bg-primary
-	 * _ So we need to check if the color exists to avoid useless computing
-	 * */
-	if (!params.utility) {
-		const { colorExists } = getColorInfos(params.color);
-
-		if (!colorExists) {
-			return null;
-		}
-	}
-
-	/**
-	 * _ If the current QoL isn't standalone and doesn't have a variation (can be called without variation)
-	 * _ then no
-	 */
-	if (!params.color && !Object.keys(params.utility?.variations || []).includes('default') && !params.variationName) {
-		return null;
+	 * If need color but doesn't have one or if need a variation but doesn't have one either
+	 * this is a no go
+	*/
+	if ((needsColor && !params.color) || (!hasDefaultVariation && !usesVariation)) {
+		return null
 	}
 
 	const ruleInfo = buildRuleInfo(params);
