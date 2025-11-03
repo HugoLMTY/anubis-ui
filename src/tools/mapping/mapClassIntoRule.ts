@@ -39,7 +39,7 @@ const mapClassIntoRule = (stringClass: string): IRuleInfo | null => {
 
 	const needsColor = params.utility?.declaration?.includes('${color}')
 	const usesVariation = params.variationName
-	const hasDefaultVariation = Object.keys(params.utility?.variations || []).includes('default')
+	const hasDefaultVariation = !params.utility?.variations || Object.keys(params.utility?.variations || []).includes('default')
 
 	/**
 	 * If need color but doesn't have one or if need a variation but doesn't have one either
