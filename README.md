@@ -112,23 +112,29 @@ For every config you want to change, add the corresponding section in your confi
   // states.config.json
   "states": ["hover"],
 
-  // qol.config.json
-  "qol": [
+  // utilities.config.json
+  "utilities": [
     {
       "prefix": "bg",
       "declaration": "background: ${color}"
-    }
-  ],
-
-  // presets.config.json
-  "presets": [
+    },
     {
       "prefix": "border",
-      "declaration": "border-width: ${value} !important; border-color: ${color} !important; border-style: solid;",
+      "declaration": "border-width: ${value} !important; border-color: var(--${color}) !important; border-style: solid;",
       "variations": {
         "default": "4px",
         "thin": "2px"
       }
+    },
+    {
+      "prefix": "rounded",
+      "declaration": "border-radius: ${value}",
+      "variations": {
+        "default": "8px",
+        "lg": "12px"
+      },
+      "standalone": true,
+      "export-variations": false
     }
   ],
 
@@ -142,12 +148,7 @@ For every config you want to change, add the corresponding section in your confi
 ```
 <sup>anubis.config.json (example)</sup>
 
-Only the sections you want to override need to be included - other sections will use default values. Not every
-> Presets is still unstable, use at your own risks
-<br />
-You __MUST__ use the exact same [presets](#presets-presetsconfigjson) names syntax to keep it working, but variations key/values can change.
-<br />
-Copy-paste is recommanded
+Only the sections you want to override need to be included - other sections will use default values.
 
 ---
 ### Colors (`colors.config.json`)
@@ -210,27 +211,21 @@ You can add multiple glob patterns to scan different file types:
 ```
 
 ---
-### Presets (`presets.config.json`)
-Configure common style presets that require both color and variation values.
+### Utilities (`utilities.config.json`)
+Configure all utility classes, whether they require colors or not. This unified configuration replaces the previous `qol.config.json` and `presets.config.json` separation.
 
-**[View default presets config →](./src/config/presets.config.json)**
+**[View default utilities config →](./src/config/utilities.config.json)**
 
-> **Note**: If overriding in your config, the default key/value are __REQUIRED__
+> **Note**: If overriding in your config, the default key/value are __REQUIRED__ for variations
 
-Presets include:
-- `bg` - Background colors (no variations)
-- `text` - Text colors (no variations)
-- `border` - Border with width variations
-- `inner-border` - Inset box shadow with width variations
-- `shadow` - Box shadow with spread variations
+**Color-based utilities** (require a color):
+- `bg` - Background colors
+- `text` - Text colors
+- `border` - Border with width variations and color
+- `inner-border` - Inset box shadow with width variations and color
+- `shadow` - Box shadow with spread variations and color
 
----
-### Quality of Life (`qol.config.json`)
-Define simple style rules that can have variations but don't require color values. These are CSS declarations that work independently.
-
-**[View default QoL config →](./src/config/qol.config.json)**
-
-QoL utilities include:
+**Standalone utilities** (no color required):
 - `blur` - Backdrop filter blur effect
 - `smooth` - Transition duration
 - `rounded` - Border radius
@@ -238,10 +233,11 @@ QoL utilities include:
 - `position` - CSS positioning (relative, absolute)
 - `size` - Font sizes (2xs to 9xl) with CSS variable export
 - `weight` - Font weights (thin to black) with CSS variable export
+- `text` - Text decoration (underline, dashed, dotted)
 
 **Configuration options**:
 1. `prefix` - The class name prefix
-2. `declaration` - CSS rule using `${value}` placeholder for variations
+2. `declaration` - CSS rule using `${color}` and/or `${value}` placeholders
 3. `variations` - Key-value pairs of variation names and their CSS values
 4. `standalone` (optional) - Allows usage without variation (uses `default` value)
 5. `export-variations` (optional) - Generates CSS variables for all variations
@@ -254,13 +250,19 @@ QoL utilities include:
 - `export-variations: true` → Generates `--size-xs`, `--size-md`, etc. as CSS variables
 - These can be used in custom CSS: `font-size: var(--size-xl)`
 
+**Color support**:
+- Use `${color}` in declaration to indicate the utility requires a color
+- Colors are automatically injected as CSS variables: `var(--{color})`
+
 Example usage:
 ```html
-<div class="rounded-lg smooth-slow border-dashed" />
+<div class="bg-primary-low border-neutral-medium hover:shadow-wide rounded-lg" />
 <div class="rounded smooth blur" /> <!-- Standalone rules with default values -->
 <p class="size-2xl weight-bold">Typography utilities</p>
+<div class="border-accent-thin">Border with color and variation</div>
 ```
 
+---
 ### States (`states.config.json`)
 Define state modifiers that can be applied to any utility class.
 
@@ -290,9 +292,9 @@ These utilities require a color from your config:
 
 - `bg-{color}` - Background color
 - `text-{color}` - Text color
-- `border-{color}` - Border with color (also requires variation for width)
-- `inner-border-{color}` - Inset box shadow (not compatible with `shadow-`)
-- `shadow-{color}` - Box shadow (not compatible with `inner-border-`)
+- `border-{color}` or `border-{color}-{variation}` - Border with color (variation optional for width)
+- `inner-border-{color}-{variation}` - Inset box shadow with color and width
+- `shadow-{color}-{variation}` - Box shadow with color and spread
 
 **Available colors**: `none`, `text`, `text-invert`, `text-link`, `primary`, `secondary`, `accent`, `neutral`, `success`, `warning`, `danger`
 
@@ -304,8 +306,8 @@ Examples:
 <div class="bg-success-lowest text-success-highest">Success themed element</div>
 ```
 
-### Preset Variations (Color + Size)
-Presets combine colors with size variations:
+### Utility Variations (Color + Size or Standalone)
+Utilities can combine colors with size variations or work standalone:
 
 - `border-{color}-{variation}` - Border with color and width
   - Variations: `thinest`, `thiner`, `thin`, `default`, `thick`, `thicker`, `thickest`, `node`
@@ -321,8 +323,8 @@ Examples:
 <div class="shadow-primary-wide hover:shadow-primary-widest">Shadow on hover</div>
 ```
 
-### Quality of Life Classes (No Color Required)
-Standalone utilities that work independently:
+### Standalone Utilities (No Color Required)
+Utilities that work independently:
 
 - `blur` / `blur-{default}` - Backdrop filter blur (default: 3px)
 - `smooth` / `smooth-{variation}` - Transition duration
@@ -337,6 +339,8 @@ Standalone utilities that work independently:
   - Variations: `2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, `7xl`, `8xl`, `9xl`
 - `weight-{weight}` - Font weight (generates CSS variables)
   - Variations: `thin`, `extra-light`, `light`, `normal`, `medium`, `semi-bold`, `bold`, `extra-bold`, `black`
+- `text-{decoration}` - Text decoration
+  - Variations: `underline`, `dashed`, `dotted`
 
 Examples:
 ```html
@@ -360,7 +364,7 @@ Examples:
 
 ## Prefix/Declaration Relations
 
-### Color Presets
+### Color Utilities
 | Prefix       | CSS Declaration                                                                 |
 |--------------|---------------------------------------------------------------------------------|
 | bg           | `background: var(--{color}) !important;`                                        |
@@ -369,7 +373,7 @@ Examples:
 | inner-border | `box-shadow: inset 0px 0px 0px {value} var(--{color}) !important;`             |
 | shadow       | `box-shadow: {value} var(--{color}) !important;`                                |
 
-### Quality of Life Utilities
+### Standalone Utilities
 | Prefix   | CSS Declaration                               |
 |----------|-----------------------------------------------|
 | blur     | `backdrop-filter: blur({value}) !important;`  |
@@ -379,6 +383,7 @@ Examples:
 | position | `position: {value} !important;`               |
 | size     | `font-size: {value} !important;`              |
 | weight   | `font-weight: {value} !important;`            |
+| text     | `text-decoration: {value} !important;`        |
 
 **Note**: When `export-variations: true` is set, `{value}` becomes `var(--{prefix}-{variation})` instead of the direct value.
 
