@@ -1,9 +1,9 @@
 import { IColor } from './color.interface';
-import { IPreset } from './preset.interface';
+import { IUtility } from './preset.interface';
 import { IFileConfig } from './files.interface';
 
 export interface IEnvConfig {
-    utilities: IPreset[];
+    utilities: IUtility[];
     files: IFileConfig;
 
     /** User-given classes to force the css rule creation */

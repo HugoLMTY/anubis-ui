@@ -129,6 +129,15 @@ For every config you want to change, add the corresponding section in your confi
         "default": "4px",
         "thin": "2px"
       }
+    },
+    {
+      "prefix": "rounded",
+      "declaration": "border-radius: ${value}",
+      "variations": {
+        "default": "8px",
+        "lg": "12px"
+      },
+      "export-variations": false
     }
   ],
 
@@ -243,21 +252,23 @@ QoL utilities include:
 1. `prefix` - The class name prefix
 2. `declaration` - CSS rule using `${value}` placeholder for variations
 3. `variations` - Key-value pairs of variation names and their CSS values
-4. `standalone` (optional) - Allows usage without variation (uses `default` value)
-5. `export-variations` (optional) - Generates CSS variables for all variations
-
-**The `standalone` flag**:
-- `standalone: true` → Can use `rounded` or `rounded-lg` (both valid)
-- `standalone: false` or omitted → Must use `border-solid` (requires variation)
+4. `export-variations` (optional) - Generates CSS variables for all variations
 
 **The `export-variations` flag**:
 - `export-variations: true` → Generates `--size-xs`, `--size-md`, etc. as CSS variables
 - These can be used in custom CSS: `font-size: var(--size-xl)`
 
+**Color support**:
+- Use `${color}` in declaration to indicate the utility requires a color
+- Colors are automatically injected as CSS variables: `var(--{color})`
+
+**Standalone usage**:
+- Utilities with a `default` variation and no color requirement can be used without specifying a variation (e.g., `rounded` uses `rounded-default`)
+
 Example usage:
 ```html
-<div class="rounded-lg smooth-slow border-dashed" />
-<div class="rounded smooth blur" /> <!-- Standalone rules with default values -->
+<div class="bg-primary-low border-neutral-medium hover:shadow-wide rounded-lg" />
+<div class="rounded smooth blur" /> <!-- Uses default variations -->
 <p class="size-2xl weight-bold">Typography utilities</p>
 ```
 

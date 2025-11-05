@@ -37,7 +37,7 @@ const init = () => {
     } else {
       const filePath = path.join(anubisConfigFolder, `${file}.config.json`)
       const fileExists = fs.existsSync(filePath)
-      if (!fileExists) { return }
+      if (!fileExists) { continue }
 
       const configContent = fs.readFileSync(filePath, { encoding: 'utf-8' })
       if (!configContent) { continue }
@@ -45,9 +45,11 @@ const init = () => {
       configToUse = JSON.parse(configContent)
     }
 
+    config[file as keyof typeof config] = configToUse
+
     switch (file) {
       case 'colors':
-        validateColors(config[file])
+        validateColors(config.colors)
         break
 
       case 'force':
@@ -57,8 +59,6 @@ const init = () => {
         }
         break
     }
-
-    config[file as keyof typeof config] = configToUse
   }
 
   return config

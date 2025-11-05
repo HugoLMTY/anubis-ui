@@ -61,7 +61,7 @@ const COLOR_COMMENT = `/**
 
 const VARIANT_COMMENT = `/**
  * These css variables are generated automatically when Anubis
- * detects that they are used in preset/qol in your config.
+ * detects that they are used in utilities in your config.
  *
  * It allows you to write custom css/scss classes in your web
  * components like:
@@ -72,7 +72,7 @@ const VARIANT_COMMENT = `/**
  * }
  *
  * (You can also force the generation of all variants from a
- * preset/qol by setting the 'export-variations' to 'true')
+ * utility by setting the 'export-variations' to 'true')
  */`;
 
 const CLASS_COMMENT = `/**

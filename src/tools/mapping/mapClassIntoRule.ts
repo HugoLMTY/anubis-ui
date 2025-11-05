@@ -120,8 +120,7 @@ const getUtilityInfos = ({
 }) => {
 	/**
 	 * Find utility variations matching the prefix from the config
-	 * Since a prefix can be in multiple utilitys and qol, filter every matching prefixes
-	 * TODO fix first default occurence getting picked when duplicate
+	 * Since a prefix can be in multiple utilities, filter every matching prefixes
 	 */
 	const possibleUtility = [...config.utilities].filter(
 		p => p.prefix === prefix

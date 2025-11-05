@@ -2,7 +2,7 @@ export interface IVariation {
     [key: string]: string;
 }
 
-export interface IPreset {
+export interface IUtility {
     // [key: string]: string
     prefix: string;
     declaration: string;

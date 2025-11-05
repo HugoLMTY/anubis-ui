@@ -116,7 +116,7 @@ const buildClassDetectionRegex = (): RegExp => {
 				const hasDefaultVariation = hasVariations && variations.includes('default')
 				const needColor = declaration.includes('${color}')
 
-				/** If variation has default key, it's considered as a standalone - can be used solo */
+				/** If variation has default key and doesn't need color, can be used solo */
 				if (hasVariations && hasDefaultVariation && !needColor) {
 					return `${prefix}`
 				}
@@ -137,8 +137,8 @@ const buildClassDetectionRegex = (): RegExp => {
 
 /** Get cached regex or build a new one if config changed */
 const getClassDetectionRegex = (): RegExp => {
-		const { states, qol, utilitys } = config;
-		const configHash = JSON.stringify({ states, qol, utilitys });
+		const { states, utilities } = config;
+		const configHash = JSON.stringify({ states, utilities });
 
 		if (cachedRegex && cachedConfigHash === configHash) {
 				return cachedRegex;
