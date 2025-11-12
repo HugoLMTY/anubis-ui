@@ -12,11 +12,11 @@ export interface IUtility {
 
     /**
      * Controls how variations are exported as SCSS variables:
-     * - true: export only variations that are used in the codebase
-     * - "always": export all variations regardless of usage
-     * - undefined/false: do not export variations
+     * - "variation": export every variations
+     * - "all": export every possible color class (utility prefix + every colors)
+     * - undefined: do not export variations
      */
-    'export-variations'?: boolean | 'always';
+    'export'?: 'variations' | 'all';
 
     /** List of every possible variations */
     variations: IVariation;

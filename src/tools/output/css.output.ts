@@ -72,7 +72,7 @@ const VARIANT_COMMENT = `/**
  * }
  *
  * (You can also force the generation of all variants from a
- * utility by setting the 'export-variations' to 'true')
+ * utility by setting the 'export' to 'variations')
  */`;
 
 const CLASS_COMMENT = `/**

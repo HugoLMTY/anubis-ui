@@ -1,11 +1,13 @@
 [
   {
     "prefix": "bg",
-    "declaration": "background: ${color}"
+    "declaration": "background: ${color}",
+    "export": "all"
   },
   {
     "prefix": "text",
-    "declaration": "color: ${color}"
+    "declaration": "color: ${color}",
+    "export": "all"
   },
   {
     "prefix": "text",
@@ -113,7 +115,7 @@
   {
     "prefix": "size",
     "declaration": "font-size: ${value} !important",
-    "export-variations": true,
+    "export": "variation",
     "variations": {
       "2xs": "10px",
       "xs": "12px",
@@ -134,7 +136,7 @@
   {
     "prefix": "weight",
     "declaration": "font-weight: ${value} !important",
-    "export-variations": true,
+    "export": "variation",
     "variations": {
       "thin": "100",
       "extra-light": "200",

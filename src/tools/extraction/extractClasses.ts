@@ -67,11 +67,14 @@ const init = async () => {
 				config.colors
 		)}`;
 
-		// Get all variations that should be exported (export-variations: true)
-		const allExportVariations = getAllExportVariations();
+		// Get all variations that should be exported (export: "variations")
+		const exportVariations = getExportVariations();
 
 		// Merge used variations with all export variations (all export variations take priority)
-		const finalVariations = { ...variationsFromRules, ...allExportVariations };
+		const finalVariations = {
+			...variationsFromRules,
+			...exportVariations
+		};
 
 		// Generate CSS variables for variations
 		const variationsCss = Object.entries(finalVariations)
@@ -95,7 +98,13 @@ const getUniqueClasses = async (files: string[]): Promise<string[]> => {
 				await pLimit(files, extractClasses, MAX_CONCURRENT_FILE_READS)
 		).flat();
 
-		const classes = [...extractedClasses, ...config.force].sort();
+		const exportClasses = getExportAllClasses()
+
+		const classes = [
+			...extractedClasses,
+			...exportClasses,
+			...config.force,
+		].sort();
 
 		const uniqueClasses = Array.from(new Set(classes));
 		return uniqueClasses;
@@ -162,23 +171,45 @@ const extractClasses = async (filePath: string): Promise<string[]> => {
 		return matches;
 };
 
-/** Get all variations from utilitys with export-variations: true */
-const getAllExportVariations = (): Record<string, string> => {
-		const allExportVariations: Record<string, string> = {};
-		const allUtilities = [...config.utilities];
+/** Get all variations from utilities with export: "all" */
+const getExportAllClasses = (): string[] => {
+		const possiblesClasses: string[] = [];
 
-		for (const utility of allUtilities) {
-				if (utility['export-variations'] === true && utility.variations) {
+		const utilities = [...config.utilities];
+		const colors = Object.keys(config.colors);
+
+		for (const utility of utilities) {
+				const exportValue = utility['export'];
+				// Pour "all", exporter toutes les possibilités de couleurs
+				if (exportValue === 'all') {
+					possiblesClasses.push(
+						...colors.map(c => `${utility.prefix}-${c}`)
+					)
+				}
+		}
+
+		return possiblesClasses;
+};
+
+/** Get all variations from utilities with export: "variations" */
+const getExportVariations = (): Record<string, string> => {
+		const exportAllVariations: Record<string, string> = {};
+		const utilities = [...config.utilities];
+
+		for (const utility of utilities) {
+				const exportValue = utility['export'];
+				// Pour "variations", exporter toutes les variations
+				if (exportValue === 'variations' && utility.variations) {
 						for (const [variantName, variantValue] of Object.entries(
 								utility.variations
 						)) {
 								const variableName = `${utility.prefix}-${variantName}`;
-								allExportVariations[variableName] = variantValue as string;
+								exportAllVariations[variableName] = variantValue as string;
 						}
 				}
 		}
 
-		return allExportVariations;
+		return exportAllVariations;
 };
 
 export { init };

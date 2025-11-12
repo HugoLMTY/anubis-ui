@@ -80,7 +80,7 @@ css: [
 
 6. Enjoy
 
-> **Note**: Generated CSS variables (from colors and export-variations) are available for custom styling:
+> **Note**: Generated CSS variables (from colors and export) are available for custom styling:
 > ```css
 > .custom-class {
 >   background: var(--primary-low);
@@ -116,7 +116,8 @@ For every config you want to change, add the corresponding section in your confi
   "qol": [
     {
       "prefix": "bg",
-      "declaration": "background: ${color}"
+      "declaration": "background: ${color}",
+      "export": "all"
     }
   ],
 
@@ -128,7 +129,8 @@ For every config you want to change, add the corresponding section in your confi
       "variations": {
         "default": "4px",
         "thin": "2px"
-      }
+      },
+      "export": "variation"
     },
     {
       "prefix": "rounded",
@@ -137,7 +139,6 @@ For every config you want to change, add the corresponding section in your confi
         "default": "8px",
         "lg": "12px"
       },
-      "export-variations": false
     }
   ],
 
@@ -252,10 +253,11 @@ QoL utilities include:
 1. `prefix` - The class name prefix
 2. `declaration` - CSS rule using `${value}` placeholder for variations
 3. `variations` - Key-value pairs of variation names and their CSS values
-4. `export-variations` (optional) - Generates CSS variables for all variations
+4. `export` (optional) - Controls how variations are exported as CSS variables
 
-**The `export-variations` flag**:
-- `export-variations: true` → Generates `--size-xs`, `--size-md`, etc. as CSS variables
+**The `export` flag**:
+- `export: "variation"` → Generates CSS variables every variations
+- `export: "all"` → Generates classes for every possible color
 - These can be used in custom CSS: `font-size: var(--size-xl)`
 
 **Color support**:
@@ -391,7 +393,7 @@ Examples:
 | size     | `font-size: {value} !important;`              |
 | weight   | `font-weight: {value} !important;`            |
 
-**Note**: When `export-variations: true` is set, `{value}` becomes `var(--{prefix}-{variation})` instead of the direct value.
+**Note**: When `export: "variation"` is set, `{value}` becomes `var(--{prefix}-{variation})` instead of the direct value.
 
 ## Architecture
 
@@ -421,7 +423,7 @@ Examples:
 
 5. **CSS Output** (`src/tools/fileStuff/css.file.ts`)
    - Generates color CSS variables with light/dark theme support
-   - Generates variation CSS variables (from `export-variations: true`)
+   - Generates variation CSS variables (from `export: "variation"` or `export: "all"`)
    - Writes final CSS rules
    - Outputs to `src/css/_anubis.scss`
 

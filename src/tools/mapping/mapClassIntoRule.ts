@@ -250,8 +250,8 @@ const buildRuleInfo = ({
 	let variantInfo = undefined;
 
 	// Vérifier si on doit exporter les variations en tant que variables CSS
-	const exportVariations = utility['export-variations'];
-	const useVariables = exportVariations === true;
+	const exportVariations = utility['export'];
+	const useVariables = exportVariations === 'variations' || exportVariations === 'all';
 
 	if (variationName && variationName !== 'default') {
 		const variablePrefix = prefix;
