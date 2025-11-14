@@ -3,18 +3,6 @@
     "light": "transparent",
     "dark": "transparent"
   },
-  "text": {
-    "light": "#000",
-    "dark": "#fff"
-  },
-  "text-invert": {
-    "light": "#fff",
-    "dark": "#000"
-  },
-  "text-link": {
-    "light": "#0a5a8a",
-    "dark": "#0f84cb"
-  },
   "accent": {
     "light": "#0f84cb",
     "dark": "#1a94db"

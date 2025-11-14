@@ -3,12 +3,66 @@
 
 AnubisUI (Autonomous Nominative Utility Based Intuitive Styler) is a Vite plugin that provides dynamic CSS class generation based on configuration files. It automatically generates CSS rules by scanning your source files and mapping utility classes to their corresponding styles.
 
+## 🚀 Quick Start
+
+AnubisUI automatically generates the CSS classes you need, simply by using them in your code. No need to write CSS manually!
+
+### Concrete Example
+
+**In your Vue/HTML component:**
+```html
+<template>
+  <div class="bg-primary-low text-primary rounded-lg smooth hover:shadow-accent-wide">
+    <button class="bg-accent text-primary size-lg weight-bold hover:bg-accent-high">
+      Click me
+    </button>
+  </div>
+</template>
+```
+
+**AnubisUI automatically generates the CSS:**
+```css
+.bg-primary-low { background: var(--primary-low) !important; }
+.text-primary { color: var(--primary) !important; }
+.rounded-lg { border-radius: 12px !important; }
+.smooth { transition-duration: 0.1s !important; }
+.hover\:shadow-accent-wide:hover { box-shadow: 0px 0px 10px 2px var(--accent) !important; }
+/* ... and much more */
+```
+
+### Key Benefits
+
+✅ **Zero CSS to write** - Use classes, AnubisUI generates the CSS\
+✅ **Light/dark themes** - Automatic support with CSS variables\
+✅ **Hot-reload** - Classes are detected and generated on the fly\
+✅ **Optimized** - Only used classes are generated\
+✅ **Customizable** - Configure your colors, variations and presets
+
+### Typical Use Cases
+
+```html
+<!-- Card with border and shadow on hover -->
+<div class="bg-neutral-lowest border-neutral-thin rounded-lg hover:shadow-primary-wide smooth">
+  <h2 class="text-primary size-2xl weight-bold">Title</h2>
+  <p class="text-neutral-medium size-md">Description</p>
+</div>
+
+<!-- Button with states -->
+<button class="bg-success text-primary rounded smooth hover:bg-success-high">
+  Validate
+</button>
+
+<!-- Badge with inner borders -->
+<span class="bg-warning-lowest inner-border-warning-thin rounded-full text-warning-high size-sm">
+  New
+</span>
+```
+
 > __⚠️ IMPORTANT__ - Dynamic classes like `` `bg-primary-${props.bg}` `` **will NOT work**
 >
 > Classes must be **EXPLICITLY written** in the code to allow the extraction to work correctly. The plugin uses regex pattern matching on your source files.
 >
 > Use the `force` configuration to generate specific classes even if they're not present in the code.
-
 
 ## Table of Contents
 1. [Features](#features)
@@ -71,12 +125,12 @@ css: [
    - Each color is exposed as a CSS variable: `--primary`, `--secondary`, etc.
    - Pre-defined color levels: `lowest`, `lower`, `low`, `medium`, `high`, `higher`, `highest`
 
-5. Start adding classes to your HTML files
+5. Start adding classes to your .vue files
 ```html
 <div class="bg-primary-low border-neutral-medium hover:shadow-wide rounded-lg" />
-<button class="bg-accent text-text-invert size-lg weight-bold smooth">Click me</button>
+<button class="bg-accent text-primary size-lg weight-bold smooth">Click me</button>
 ```
-<sup>any .html file</sup>
+<sup>any .vue file</sup>
 
 6. Enjoy
 
@@ -96,33 +150,29 @@ To override default configuration, add a `anubis.config.json` in project root fo
 >Overriding completly replaces default configuration. You need to copy/paste it and add yours if you want to keep the default too.
 <br />
 
-For every config you want to change, add the corresponding section in your config file:
+Only the sections you want to override need to be included - other sections will use default values.\
+For every config you want to change, add the corresponding section in your config file
+<br />
 
+### Some examples:
 ```js
 {
   // files.config.json
   "files": {
     "targets": ["/.vue"],
-    "ignore": []
+    "ignore": ["**/*specificFile.vue"]
   },
 
   // colors.config.json
-  "colors": ["primary", "secondary"],
+  "colors": ["primary", "secondary", "..."],
 
-  // states.config.json
-  "states": ["hover"],
-
-  // qol.config.json
-  "qol": [
+  // utilities.config.json
+  "utilities": [
     {
       "prefix": "bg",
       "declaration": "background: ${color}",
       "export": "all"
     }
-  ],
-
-  // presets.config.json
-  "presets": [
     {
       "prefix": "border",
       "declaration": "border-width: ${value} !important; border-color: ${color} !important; border-style: solid;",
@@ -145,19 +195,12 @@ For every config you want to change, add the corresponding section in your confi
   // force.config.json
   "force": [
     "bg-primary-10",
-    "bg-primary-20",
-    "bg-primary-30"
+    "hover:border-neutral-thin",
+    "text-danger"
   ]
 }
 ```
 <sup>anubis.config.json (example)</sup>
-
-Only the sections you want to override need to be included - other sections will use default values. Not every
-> Presets is still unstable, use at your own risks
-<br />
-You __MUST__ use the exact same [presets](#presets-presetsconfigjson) names syntax to keep it working, but variations key/values can change.
-<br />
-Copy-paste is recommanded
 
 ---
 ### Colors (`colors.config.json`)
@@ -173,7 +216,7 @@ Define your color palette with light/dark theme support. Colors can be defined i
      "dark": "#1a94db"
    }
    ```
-   Generates color variables for both light and dark themes with opacity variations.
+   <sup>Generates color variables for both light and dark themes with opacity variations.</sup>
 
 2. **Light theme only** - Define only `light` value:
    ```json
@@ -181,7 +224,7 @@ Define your color palette with light/dark theme support. Colors can be defined i
      "light": "#ff00ff"
    }
    ```
-   Generates color variables only for light theme. Dark theme will not have this color defined.
+   <sup>Generates color variables only for light theme. Dark theme will not have this color defined.</sup>
 
 3. **Dark theme only** - Define only `dark` value:
    ```json
@@ -189,9 +232,30 @@ Define your color palette with light/dark theme support. Colors can be defined i
      "dark": "#00ffff"
    }
    ```
-   Generates color variables only for dark theme. Light theme will not have this color defined.
+   <sup>Generates color variables only for dark theme. Light theme will not have this color defined.</sup>
 
-Full palette includes: `primary`, `secondary`, `accent`, `neutral`, `success`, `warning`, `danger` with levels: `lowest`, `lower`, `low`, `medium`, `high`, `higher`, `highest`.
+Full palette includes:\
+<b>Colors</b>
+<ul>
+  <li>primary</li>
+  <li>secondary</li>
+  <li>accent</li>
+  <li>neutral</li>
+  <li>success</li>
+  <li>warning</li>
+  <li>danger</lu>
+</ul>
+
+<b>Levels</b>
+<ul>
+  <li>lowest <i>- lighest</i></li>
+  <li>lower</li>
+  <li>low</li>
+  <li>medium</li>
+  <li>high</li>
+  <li>higher</li>
+  <li>highest <i>- darkest</i></li>
+</ul>
 
 **Color naming convention**: Colors are automatically converted to CSS variables as `--{color-name}`. Use semantic color levels to ensure proper theme adaptation.
 
@@ -220,19 +284,18 @@ You can add multiple glob patterns to scan different file types:
 ```
 
 ---
-### Presets (`presets.config.json`)
-Configure common style presets that require both color and variation values.
+### Utilities (`utilities.config.json`)
+Configure all utility classes. This includes both color-based utilities and standalone utilities.
 
-**[View default presets config →](./src/config/presets.config.json)**
+**[View default utilities config →](./src/config/utilities.config.json)**
 
-> **Note**: If overriding in your config, the default key/value are __REQUIRED__
+**Color-based utilities** (require a color):
+- `bg` - Background colors
+- `text` - Text colors
+- `border` - Border with width variations and color
+- `inner-border` - Inset box shadow with width variations and color
+- `shadow` - Box shadow with spread variations and color
 
-Presets include:
-- `bg` - Background colors (no variations)
-- `text` - Text colors (no variations)
-- `border` - Border with width variations
-- `inner-border` - Inset box shadow with width variations
-- `shadow` - Box shadow with spread variations
 
 ---
 ### Quality of Life (`qol.config.json`)
@@ -313,12 +376,12 @@ These utilities require a color from your config:
 
 Examples:
 ```html
-<div class="bg-primary-low text-text-invert">Blue background with inverted text</div>
+<div class="bg-primary-low text-primary">Blue background with primary text</div>
 <div class="bg-success-lowest text-success-highest">Success themed element</div>
 ```
 
-### Preset Variations (Color + Size)
-Presets combine colors with size variations:
+### Utility Variations (Color + Size)
+Utilities can combine colors with size variations:
 
 - `border-{color}-{variation}` - Border with color and width
   - Variations: `thinest`, `thiner`, `thin`, `default`, `thick`, `thicker`, `thickest`, `node`
@@ -373,7 +436,7 @@ Examples:
 
 ## Prefix/Declaration Relations
 
-### Color Presets
+### Color-based Utilities
 | Prefix       | CSS Declaration                                                                 |
 |--------------|---------------------------------------------------------------------------------|
 | bg           | `background: var(--{color}) !important;`                                        |
@@ -409,7 +472,7 @@ Examples:
    - Concurrent file reading with configurable limit (default: 10 files)
 
 3. **Class Extraction** (`src/tools/extraction/extractClasses.ts`)
-   - Builds dynamic regex from config (states, presets, qol prefixes)
+   - Builds dynamic regex from config (states, utilities prefixes)
    - Extracts classes matching pattern: `(state:)?(prefix-)(-?(color|variation))?`
    - Merges with forced classes from config
    - Deduplicates and returns unique classes
@@ -417,7 +480,7 @@ Examples:
 4. **Rule Generation** (`src/tools/mapping/mapClassIntoRule.ts`)
    - Parses each class to identify state, prefix, color, and variation
    - Validates color existence in config
-   - Handles preset variations (direct values or CSS variables)
+   - Handles utility variations (direct values or CSS variables)
    - Generates CSS rules with proper selectors and declarations
    - Collects variants for CSS variable export
 
@@ -447,10 +510,10 @@ The plugin (`index.js`) provides:
 ├── src/
 │   ├── config/                     # Default configuration files
 │   │   ├── colors.config.json      # Color palette (light/dark themes)
-│   │   ├── presets.config.json     # Color-based utilities
-│   │   ├── qol.config.json         # Standalone utilities
-│   │   ├── states.config.json      # State modifiers
-│   │   └── files.config.json       # File scan patterns
+│   │   ├── utilities.config.json   # All utility classes (bg, text, border, etc.)
+│   │   ├── states.config.json       # State modifiers
+│   │   ├── files.config.json       # File scan patterns
+│   │   └── force.config.json       # Force specific classes
 │   ├── interfaces/                 # TypeScript type definitions
 │   └── tools/
 │       ├── extraction/             # Class extraction logic
