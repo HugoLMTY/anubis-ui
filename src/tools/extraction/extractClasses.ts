@@ -1,113 +1,61 @@
-import { getFiles } from '@tools/fileStuff/file.tools';
+import { getFiles, outputFile, pLimit, writeFile } from '@tools/fileStuff/file.tools';
 import { mapClassesIntoRules } from '@tools/mapping/mapClassIntoRule';
-import { writeCssRuleFile } from '@tools/fileStuff/css.file';
 import { config } from '@tools/config.tool';
-import { mapColorsIntoMixinDeclaration } from '@tools/mapping/mapColorIntoDeclaration';
+import { mapColorsIntoMixinDeclaration, mapColorsIntoTokens } from '@tools/mapping/mapColors';
 
 import fs from 'fs';
-import {
-		CLASS_COMMENT,
-		COLOR_COMMENT,
-		VARIANT_COMMENT,
-} from '../output/css.output';
+import { getHeader, comments } from '../output/css.output';
 import { log } from '../logger';
 
 // Cache for regex compilation
 let cachedRegex: RegExp | null = null;
 let cachedConfigHash: string | null = null;
 
-// Performance optimization: limit concurrent file reads to avoid overwhelming the system
-const MAX_CONCURRENT_FILE_READS = 10;
-
-/**
- * Execute promises with concurrency limit
- * @param items - Items to process
- * @param fn - Async function to execute for each item
- * @param limit - Maximum number of concurrent operations
- */
-const pLimit = async <T, R>(
-		items: T[],
-		fn: (item: T) => Promise<R>,
-		limit: number
-): Promise<R[]> => {
-		const results: R[] = [];
-		let index = 0;
-
-		const executeNext = async (): Promise<void> => {
-				if (index >= items.length) return;
-
-				const currentIndex = index++;
-				const item = items[currentIndex];
-				const result = await fn(item);
-				results[currentIndex] = result;
-		};
-
-		const workers = Array(Math.min(limit, items.length))
-				.fill(null)
-				.map(async () => {
-						while (index < items.length) {
-								await executeNext();
-						}
-				});
-
-		await Promise.all(workers);
-		return results;
-};
-
 /** Fetch vue file based on config target patterns */
-const init = async () => {
-		// console.log({ config })
+export const init = async () => {
 		const files = await getFiles(config.files);
 
 		const uniqueClasses = await getUniqueClasses(files);
 		const { rules, variationsFromRules } = mapClassesIntoRules(uniqueClasses);
 
-		// Generate all colors from config (no filtering)
-		const mappedColors = `${COLOR_COMMENT}\n${mapColorsIntoMixinDeclaration(
-				config.colors
-		)}`;
+		const colors = `${comments.colors}\n${mapColorsIntoMixinDeclaration(config.colors)}`;
 
-		// Get all variations that should be exported (export: "variations")
-		const exportVariations = getExportVariations();
+		const skipVariations = false
+		const variations = skipVariations ? '' : handleVariations(variationsFromRules)
+		const wrappedRules = rules ? `${comments.rules}\n${rules}` : '';
 
-		// Merge used variations with all export variations (all export variations take priority)
-		const finalVariations = {
-			...variationsFromRules,
-			...exportVariations
-		};
-
-		// Generate CSS variables for variations
-		const variationsCss = Object.entries(finalVariations)
-				.map(([varName, varValue]) => `  --${varName}: ${varValue};`)
-				.join('\n');
-
-		const wrappedVariations = variationsCss
-				? `${VARIANT_COMMENT}\n:root {\n${variationsCss}\n}`
-				: '';
-
-		const wrappedRules = rules ? `${CLASS_COMMENT}\n${rules}` : '';
-
-		const file = writeCssRuleFile(mappedColors, wrappedVariations, wrappedRules);
+		const fileContent = `${getHeader()}\n${colors}\n\n${variations}\n\n${wrappedRules}`;
+		const file = writeFile(outputFile, fileContent);
 		return file;
 };
 
 /** Extract detected class and map into a flat set */
 const getUniqueClasses = async (files: string[]): Promise<string[]> => {
-		// Use concurrency limit to avoid overwhelming the system on large codebases
-		const extractedClasses = (
-				await pLimit(files, extractClasses, MAX_CONCURRENT_FILE_READS)
-		).flat();
+	/** Find matching classes from a given file based on config states and prefixes */
+	const extractClasses = async (filePath: string): Promise<string[]> => {
+		const file = await fs.promises.readFile(filePath, 'utf-8');
+		if (!file) {
+			return [];
+		}
 
-		const exportClasses = getExportAllClasses()
+		const classDetectionRegex = getClassDetectionRegex();
+		const matches = file.match(classDetectionRegex) || [];
 
-		const classes = [
-			...extractedClasses,
-			...exportClasses,
-			...config.force,
-		].sort();
+		return matches;
+	};
 
-		const uniqueClasses = Array.from(new Set(classes));
-		return uniqueClasses;
+	const extractedClasses = (await pLimit(files, extractClasses)).flat();
+
+	const exportedClasses = getExportedClasses()
+
+	const classes = [
+		...extractedClasses,
+		...exportedClasses,
+		...config.force,
+	].sort();
+
+	const uniqueClasses = Array.from(new Set(classes));
+	return uniqueClasses;
 };
 
 /** Build regex pattern from config */
@@ -158,21 +106,8 @@ const getClassDetectionRegex = (): RegExp => {
 		return cachedRegex;
 };
 
-/** Find matching classes from a given file based on config states and prefixes */
-const extractClasses = async (filePath: string): Promise<string[]> => {
-		const file = await fs.promises.readFile(filePath, 'utf-8');
-		if (!file) {
-				return [];
-		}
-
-		const classDetectionRegex = getClassDetectionRegex();
-		const matches = file.match(classDetectionRegex) || [];
-
-		return matches;
-};
-
 /** Get all variations from utilities with export: "all" */
-const getExportAllClasses = (): string[] => {
+const getExportedClasses = (): string[] => {
 		const possiblesClasses: string[] = [];
 
 		const utilities = [...config.utilities];
@@ -180,10 +115,11 @@ const getExportAllClasses = (): string[] => {
 
 		for (const utility of utilities) {
 				const exportValue = utility['export'];
-				// Pour "all", exporter toutes les possibilités de couleurs
+				
+				/** export every possible colors variations */
 				if (exportValue === 'all') {
 					possiblesClasses.push(
-						...colors.map(c => `${utility.prefix}-${c}`)
+						...colors.map(color => `${utility.prefix}-${color}`)
 					)
 				}
 		}
@@ -192,7 +128,7 @@ const getExportAllClasses = (): string[] => {
 };
 
 /** Get all variations from utilities with export: "variations" */
-const getExportVariations = (): Record<string, string> => {
+export const getExportedVariations = (): Record<string, string> => {
 		const exportAllVariations: Record<string, string> = {};
 		const utilities = [...config.utilities];
 
@@ -212,4 +148,21 @@ const getExportVariations = (): Record<string, string> => {
 		return exportAllVariations;
 };
 
-export { init };
+export const handleVariations = (extractedVariations: Record<string, string>): string => {
+	const exportedVariations = getExportedVariations();
+		const variations = {
+			...extractedVariations,
+			...exportedVariations
+		};
+
+		// Generate CSS variables for variations
+		const variationsCss = Object.entries(variations)
+				.map(([varName, varValue]) => `	--${varName}: ${varValue};`)	
+				.join('\n');
+
+		const wrappedVariations = variationsCss
+				? `${comments.variations}\n:root {\n${variationsCss}\n}`
+				: '';
+
+	return wrappedVariations
+}

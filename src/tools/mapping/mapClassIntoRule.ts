@@ -23,7 +23,7 @@ const mapClassesIntoRules = (classes: string[]) => {
 
 	return {
 		rules,
-		variationsFromRules: Object.fromEntries(usedVariations),
+		variationsFromRules: Object.fromEntries(usedVariations) as Record<string, string>,
 	};
 };
 

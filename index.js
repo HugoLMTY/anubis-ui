@@ -1,26 +1,15 @@
 "use strict";
 
-const { init: initConfig, config } = require('./dist/tools/config.tool');
-const { log, logPrefix, logo } = require('./dist/tools/logger');
-const { init: initClassExtraction } = require('./dist/tools/extraction/extractClasses');
+const { config } = require('./dist/tools/config.tool');
+const { measureDuration, log, logPrefix, logo } = require('./dist/tools/logger');
+const { init: initAnubis } = require('./dist/tools/main')
 
 const init = async () => {
   logo();
-
-  console.time(`${logPrefix} Config initialized in`);
-  initConfig();
-  console.timeEnd(`${logPrefix} Config initialized in`);
-  log('---');
-
-  console.time(`${logPrefix} Rules generated in`);
-  await initClassExtraction();
-  console.timeEnd(`${logPrefix} Rules generated in`);
-  log('---');
+  await measureDuration('Anubis', initAnubis, false)
 };
 
 const refresh = async (file) => {
-  // console.log({ file });
-
   // _ Prevent self change loop
   // todo - add targets / ignore detection
   if (file.endsWith('_anubis.scss')) { return }
@@ -30,9 +19,7 @@ const refresh = async (file) => {
     return
   }
 
-  console.time(`${logPrefix} Refreshed in`);
-  await initClassExtraction();
-  console.timeEnd(`${logPrefix} Refreshed in`);
+  await measureDuration('Refresh', initAnubis, false)
 }
 
 function AnubisUI() {
