@@ -1,9 +1,8 @@
 import { version } from '../version';
 
-const logPrefix = '☯︎ [ANUBIS]'
-const log = (str: string) => console.log(`${logPrefix} ${str}`)
-
-const logo = () => {
+export const logPrefix = '☯︎ [ANUBIS]'
+export const log = (str: string) => console.log(`${logPrefix} ${str}`)
+export const logo = () => {
   log('    ___    _   ____  ______  _________')
   log('   /   |  / | / / / / / __ )/  _/ ___/')
   log('  / /| | /  |/ / / / / __  |/ / \\__ \\')
@@ -15,9 +14,10 @@ const logo = () => {
   log('---')
 }
 
-export {
-  logo,
-
-  log,
-  logPrefix
+/** Execute a callback function and measure it's duration */
+export const measureDuration = async (section: string, cb: () => any, linebreak = true) => {
+  console.time(`${logPrefix} ${section} initialized in`);
+  await cb()
+  console.timeEnd(`${logPrefix} ${section} initialized in`);
+  linebreak && log('---');
 }
