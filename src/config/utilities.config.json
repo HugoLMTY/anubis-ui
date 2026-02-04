@@ -21,6 +21,11 @@
   {
     "prefix": "border",
     "declaration": "border-width: ${value} !important; border-color: ${color} !important; border-style: solid;",
+    "overrides": [
+      "generic-border-radius",
+      "button-border-radius",
+      "button-push-border-radius"
+    ],
     "variations": {
       "default": "4px",
       "thinest": "1px",
@@ -115,7 +120,7 @@
   {
     "prefix": "size",
     "declaration": "font-size: ${value} !important",
-    "export": "variation",
+    "export": "variations",
     "variations": {
       "2xs": "10px",
       "xs": "12px",
@@ -136,7 +141,7 @@
   {
     "prefix": "weight",
     "declaration": "font-weight: ${value} !important",
-    "export": "variation",
+    "export": "variations",
     "variations": {
       "thin": "100",
       "extra-light": "200",

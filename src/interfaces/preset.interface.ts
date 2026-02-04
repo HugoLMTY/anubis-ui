@@ -16,7 +16,10 @@ export interface IUtility {
      * - "all": export every possible color class (utility prefix + every colors)
      * - undefined: do not export variations
      */
-    'export'?: 'variations' | 'all';
+    export?: 'variations' | 'all';
+
+    /** Override default global variables with the "default" variation if existing */
+    overrides?: string[]
 
     /** List of every possible variations */
     variations: IVariation;
