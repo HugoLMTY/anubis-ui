@@ -16,13 +16,20 @@
   ],
   "scripts": {
     "dev": "rm -rf dist; npm run prepare; node src/manual/build.js",
-    "build": "node scripts/generate-version.js && tsc && tsc-alias",
-    "preinstall": "npm run build",
+    "build": "node scripts/generate-version.js && npx tsc && npx tsc-alias",
     "prepare": "npm run build",
+    "prepublishOnly": "npm run build",
     "test": "vitest",
     "test:run": "vitest run",
     "test:ui": "vitest --ui"
   },
+  "files": [
+    "dist",
+    "index.js",
+    "index.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
   "style": "dist/_anubis.scss",
   "repository": {
     "type": "git",

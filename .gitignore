@@ -6,3 +6,8 @@ template
 src/css
 anubis.config.json
 version.ts
+
+# Generated files at root (dev mode)
+_anubis.scss
+anubis/
+quasar.variables.scss
