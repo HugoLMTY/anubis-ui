@@ -10,6 +10,7 @@ const readUserConfigFile = () => {
 
     if (!userConfigExists) {
         log('No user config file found, using default configuration.');
+        log('---')
         return;
     }
 
