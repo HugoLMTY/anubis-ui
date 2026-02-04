@@ -92,6 +92,8 @@ AnubisUI automatically generates the CSS classes you need, simply by using them 
 - 🔍 Smart class detection and parsing
 - 📦 CSS variable generation for reusable values
 - ⚙️ Export variations as CSS variables for custom styling
+- 🎛️ SCSS tokens generation for global color access
+- 🔧 Quasar/global variable overrides from utility defaults
 
 # Installation
 
@@ -119,20 +121,27 @@ css: [
 ```
 <sup>quasar.config.js</sup>
 
-4. Colors are automatically defined from the configuration
+4. AnubisUI generates the following files automatically in `src/css/`:
+   - `_anubis.scss` - Main stylesheet with all generated rules
+   - `anubis/_mixins.scss` - SCSS mixins for color handling
+   - `anubis/_tokens.scss` - Color token variables (`$primary`, `$primary-dark`, etc.)
+   - `anubis/_overrides.scss` - Quasar variable overrides from utilities
+   - `quasar.variables.scss` - Auto-injected imports for tokens and overrides
+
+5. Colors are automatically defined from the configuration
    - AnubisUI generates CSS variables for all colors defined in `colors.config.json`
    - Colors support light/dark themes automatically
    - Each color is exposed as a CSS variable: `--primary`, `--secondary`, etc.
    - Pre-defined color levels: `lowest`, `lower`, `low`, `medium`, `high`, `higher`, `highest`
 
-5. Start adding classes to your .vue files
+6. Start adding classes to your .vue files
 ```html
 <div class="bg-primary-low border-neutral-medium hover:shadow-wide rounded-lg" />
 <button class="bg-accent text-primary size-lg weight-bold smooth">Click me</button>
 ```
 <sup>any .vue file</sup>
 
-6. Enjoy
+7. Enjoy
 
 > **Note**: Generated CSS variables (from colors and export) are available for custom styling:
 > ```css
@@ -140,6 +149,16 @@ css: [
 >   background: var(--primary-low);
 >   font-size: var(--size-xl);
 >   font-weight: var(--weight-bold);
+> }
+> ```
+
+> **SCSS Tokens**: Color tokens are also available as SCSS variables for compile-time usage:
+> ```scss
+> @use "anubis/_tokens.scss" as tokens;
+> 
+> .custom-class {
+>   border-color: tokens.$primary;
+>   background: tokens.$accent-dark;
 > }
 > ```
 
@@ -180,7 +199,7 @@ For every config you want to change, add the corresponding section in your confi
         "default": "4px",
         "thin": "2px"
       },
-      "export": "variation"
+      "export": "variations"
     },
     {
       "prefix": "rounded",
@@ -297,13 +316,7 @@ Configure all utility classes. This includes both color-based utilities and stan
 - `shadow` - Box shadow with spread variations and color
 
 
----
-### Quality of Life (`qol.config.json`)
-Define simple style rules that can have variations but don't require color values. These are CSS declarations that work independently.
-
-**[View default QoL config →](./src/config/qol.config.json)**
-
-QoL utilities include:
+**Standalone utilities** (no color required):
 - `blur` - Backdrop filter blur effect
 - `smooth` - Transition duration
 - `rounded` - Border radius
@@ -314,14 +327,37 @@ QoL utilities include:
 
 **Configuration options**:
 1. `prefix` - The class name prefix
-2. `declaration` - CSS rule using `${value}` placeholder for variations
+2. `declaration` - CSS rule using `${value}` and/or `${color}` placeholders
 3. `variations` - Key-value pairs of variation names and their CSS values
 4. `export` (optional) - Controls how variations are exported as CSS variables
+5. `overrides` (optional) - List of Quasar/global SCSS variables to override with the default variation
 
 **The `export` flag**:
-- `export: "variation"` → Generates CSS variables every variations
+- `export: "variations"` → Generates CSS variables for every variation
 - `export: "all"` → Generates classes for every possible color
 - These can be used in custom CSS: `font-size: var(--size-xl)`
+
+**The `overrides` option**:
+Override Quasar or global SCSS variables with the `default` variation value:
+```json
+{
+  "prefix": "border",
+  "declaration": "border-width: ${value}; border-color: ${color}; border-style: solid;",
+  "overrides": [
+    "generic-border-radius",
+    "button-border-radius"
+  ],
+  "variations": {
+    "default": "4px",
+    "thin": "2px"
+  }
+}
+```
+This generates in `anubis/_overrides.scss`:
+```scss
+$generic-border-radius: 4px;
+$button-border-radius: 4px;
+```
 
 **Color support**:
 - Use `${color}` in declaration to indicate the utility requires a color
@@ -456,37 +492,54 @@ Examples:
 | size     | `font-size: {value} !important;`              |
 | weight   | `font-weight: {value} !important;`            |
 
-**Note**: When `export: "variation"` is set, `{value}` becomes `var(--{prefix}-{variation})` instead of the direct value.
+**Note**: When `export: "variations"` is set, `{value}` becomes `var(--{prefix}-{variation})` instead of the direct value.
 
 ## Architecture
 
 ### Build Process Flow
+
+The build process is orchestrated by `src/tools/main.ts` which runs the following steps in sequence:
 
 1. **Configuration Initialization** (`src/tools/config.tool.ts`)
    - Loads default configs from `src/config/*.config.json`
    - Merges with user's `anubis.config.json` if present
    - User config completely replaces default sections (no deep merge)
 
-2. **File Scanning** (`src/tools/fileStuff/file.tools.ts`)
-   - Scans files matching glob patterns from `files.config.json`
-   - Concurrent file reading with configurable limit (default: 10 files)
+2. **Mixins Generation** (`src/tools/output/css.output.ts`)
+   - Generates SCSS mixins for color handling (light/dark theme support)
+   - Outputs to `src/css/anubis/_mixins.scss`
 
-3. **Class Extraction** (`src/tools/extraction/extractClasses.ts`)
+3. **Tokens Generation** (`src/tools/mapping/mapColors.ts`)
+   - Maps all colors from config into SCSS token variables
+   - Generates `$colorname`, `$colorname-light`, `$colorname-dark` variables
+   - Outputs to `src/css/anubis/_tokens.scss`
+
+4. **Overrides Generation** (`src/tools/mapping/mapUtilities.ts`)
+   - Maps utilities with `overrides` property to SCSS variable declarations
+   - Allows overriding Quasar/global variables with utility defaults
+   - Outputs to `src/css/anubis/_overrides.scss`
+
+5. **Quasar Variables Injection** (`src/tools/fileStuff/quasar-variables.file.ts`)
+   - Automatically adds `@use` imports for tokens and overrides
+   - Updates `src/css/quasar.variables.scss`
+
+6. **Class Extraction** (`src/tools/extraction/extractClasses.ts`)
+   - Scans files matching glob patterns from `files.config.json`
    - Builds dynamic regex from config (states, utilities prefixes)
    - Extracts classes matching pattern: `(state:)?(prefix-)(-?(color|variation))?`
-   - Merges with forced classes from config
+   - Merges with forced classes and exported classes from config
    - Deduplicates and returns unique classes
 
-4. **Rule Generation** (`src/tools/mapping/mapClassIntoRule.ts`)
+7. **Rule Generation** (`src/tools/mapping/mapClassIntoRule.ts`)
    - Parses each class to identify state, prefix, color, and variation
    - Validates color existence in config
    - Handles utility variations (direct values or CSS variables)
    - Generates CSS rules with proper selectors and declarations
    - Collects variants for CSS variable export
 
-5. **CSS Output** (`src/tools/fileStuff/css.file.ts`)
+8. **CSS Output** (`src/tools/extraction/extractClasses.ts`)
    - Generates color CSS variables with light/dark theme support
-   - Generates variation CSS variables (from `export: "variation"` or `export: "all"`)
+   - Generates variation CSS variables (from `export: "variations"` or `export: "all"`)
    - Writes final CSS rules
    - Outputs to `src/css/_anubis.scss`
 
@@ -499,10 +552,14 @@ The plugin (`index.js`) provides:
 
 ### Core Components
 
-- **Config System**: Manages configuration loading and merging
-- **Class Extractor**: Regex-based pattern matching for class detection
-- **Rule Mapper**: Complex parsing logic for class-to-CSS conversion
-- **CSS Generator**: Generates variables and rules with proper formatting
+- **Main Orchestrator** (`main.ts`): Coordinates all initialization steps with timing
+- **Config System** (`config.tool.ts`): Manages configuration loading and merging
+- **Class Extractor** (`extractClasses.ts`): Regex-based pattern matching for class detection
+- **Color Mapper** (`mapColors.ts`): Generates tokens and mixin declarations from colors
+- **Utilities Mapper** (`mapUtilities.ts`): Generates SCSS overrides from utilities config
+- **Rule Mapper** (`mapClassIntoRule.ts`): Complex parsing logic for class-to-CSS conversion
+- **CSS Generator** (`css.output.ts`): Generates variables, mixins and rules with proper formatting
+- **File Tools** (`file.tools.ts`): Centralized file I/O with concurrency control
 
 ### File Structure
 ```
@@ -511,15 +568,27 @@ The plugin (`index.js`) provides:
 │   ├── config/                     # Default configuration files
 │   │   ├── colors.config.json      # Color palette (light/dark themes)
 │   │   ├── utilities.config.json   # All utility classes (bg, text, border, etc.)
-│   │   ├── states.config.json       # State modifiers
+│   │   ├── states.config.json      # State modifiers
 │   │   ├── files.config.json       # File scan patterns
 │   │   └── force.config.json       # Force specific classes
+│   ├── css/                        # Generated CSS output (in user project)
+│   │   ├── _anubis.scss            # Main generated stylesheet
+│   │   ├── quasar.variables.scss   # Quasar variables with injected imports
+│   │   └── anubis/
+│   │       ├── _mixins.scss        # SCSS mixins for color handling
+│   │       ├── _tokens.scss        # Color token variables
+│   │       └── _overrides.scss     # Quasar/global variable overrides
 │   ├── interfaces/                 # TypeScript type definitions
 │   └── tools/
 │       ├── extraction/             # Class extraction logic
 │       ├── fileStuff/              # File I/O operations
 │       ├── mapping/                # Class-to-CSS mapping
+│       │   ├── mapClassIntoRule.ts # Class to CSS rule conversion
+│       │   ├── mapColors.ts        # Color to tokens/mixins mapping
+│       │   └── mapUtilities.ts     # Utilities to overrides mapping
+│       ├── output/                 # CSS output generation
 │       ├── config.tool.ts          # Configuration loader
+│       ├── main.ts                 # Main orchestration entry point
 │       └── logger.ts               # Logging utilities
 └── index.js                        # Vite plugin entry point
 ```
