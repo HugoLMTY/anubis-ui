@@ -6,8 +6,8 @@ const header = `/**
  * Improba
  * Released under the MIT License.
  */
-@use "${mixinsFile}";
-@use "${tokensFile}";
+@use "${mixinsFile}" as *;
+@use "${tokensFile}" as *;
 `;
 
 export const mixins = `@use "sass:color";
