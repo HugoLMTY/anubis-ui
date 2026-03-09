@@ -101,7 +101,11 @@ export const defineColor = (colorName: string, light?: string, dark?: string) =>
 
   // _ only dark
   if (!light && dark) {
-      return `@include setRootColors('${colorName}', null, ${darkColor});`;
+    return `@include setRootColors('${colorName}', null, ${darkColor});`;
+  }
+    
+  if (light && !dark) {
+    return `@include setRootColors('${colorName}', ${lightColor}, null);`;
   }
 
   // _ light and/or dark
