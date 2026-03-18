@@ -8,7 +8,9 @@ export const init = () => {
     ?.map(i => `@use "${i}";`)
     ?.filter(i => !currentFileContent.includes(i))
     ?.join('\n')
-  
+
+  if (!imports) { return }
+
   const newContent = `${imports}\n${currentFileContent}`?.trim()
   writeFile(quasarFile, newContent)
 }

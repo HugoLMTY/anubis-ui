@@ -42,9 +42,14 @@ export const init = async () => {
    * Extract classes from the project to remap them into css declaration
    * @output _anubis.scss
    * */
-  await measureDuration('Rules', initClassExtraction) 
+  await measureDuration('Rules', initClassExtraction)
 
-  return 
+  return
+}
+
+/** Re-run only class extraction (e.g. on file change). Does not re-run config, mixins, tokens, overrides or quasar imports. */
+export const refresh = async () => {
+  await measureDuration('Refresh', initClassExtraction)
 }
 
 const initMixins = () => {
