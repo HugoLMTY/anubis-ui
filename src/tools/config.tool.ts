@@ -5,8 +5,10 @@ import { validateColors } from '@validation/color.validation';
 import fs from 'fs';
 import path from 'path';
 
-const anubisConfigFolder = path.join(__dirname, '..', '..', 'src', 'config');
+/** Resolved at runtime: dist/config when built (npm package), so default configs are available after install */
+const anubisConfigFolder = path.join(__dirname, '..', 'config');
 const anubisConfigFiles = [
+  'global',
   'utilities',
   'files',
   'colors',
@@ -15,6 +17,7 @@ const anubisConfigFiles = [
 ]
 
 const config = {
+  global: {},
   utilities: [],
 
   force: [],

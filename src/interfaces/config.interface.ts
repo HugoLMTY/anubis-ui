@@ -3,6 +3,8 @@ import { IUtility } from './preset.interface';
 import { IFileConfig } from './files.interface';
 
 export interface IEnvConfig {
+    global: { silent: boolean };
+
     utilities: IUtility[];
     files: IFileConfig;
 
